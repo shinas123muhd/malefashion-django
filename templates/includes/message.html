@@ -1,0 +1,31 @@
+{% if messages %}
+    {% for message in messages %}
+    <div id = "message" class="container">
+    <div {% if message.tags %} class= "alert alert-{{ message.tags }}"{% endif %} role="alert">
+      
+          {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error:{% endif %}            
+          {{message}}
+    </div>
+    </div>
+    {% endfor %}
+{% endif %}
+<script>
+
+      setTimeout(function(){
+        document.getElementById('message').style.opacity = 0;
+    },4000);
+    
+  </script>
+  <style>
+    body{
+      position:relative;
+    }
+    #message {
+      transition: opacity 0.5s ease-out;
+      position:absolute;
+      
+      left: 45%;
+      width:400px;
+
+    }
+  </style>

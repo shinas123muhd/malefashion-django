@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<section class="section-conten padding-y bg">
+
+{% include 'includes/message.html' %}
+<div class="container">
+	<div class="row">
+	{% include 'includes/dashboardside.html' %}
+	<main class="col-md-9">
+		<article class="card">
+		<header class="card-header">
+			<strong class="d-inline-block mr-3">Edit your Profile</strong>
+			<span>{{ user.username }}</span>
+		</header>
+		<div class="card-body">
+            
+            
+			<div class="row">
+			<div class="col-md-12">
+					<form action="{% url 'editprofile'%}"method="POST">
+                        {% csrf_token %}						
+					     <div class="form-row">
+                                                       					                              
+                            <div class = "form-group col-md-6">
+                                <label>User Name</label>
+                                {{ user_form.username }}														
+						    </div>                            
+					     </div>
+                         <div class="form-row">
+                            <div class = "form-group col-md-6">
+                                <label>Phone number</label>
+                                {{ user_form.phone_number }}														
+						    </div>
+                            <div class = "form-group">
+                                <label>Address Line 1</label>
+                                {{ profile_form.address_line_1 }}														
+						    </div>
+                            <div class = "form-group">
+                                <label>Address Line 2</label>
+                                {{ profile_form.address_line_2 }}														
+						    </div>
+                            <div class = "form-group col-md-4">
+                                <label>City</label>
+                                {{ profile_form.city }}														
+						    </div>
+                            <div class = "form-group col-md-4">
+                                <label>State</label>
+                                {{ profile_form.state}}													
+						    </div>                            					                              
+                                                        
+					     </div>
+                         <input type = "submit" value = "save" class = "btn btn-primary mt-3">
+                    </form>
+            </div>											
+			</div>
+        </div> 
+		
+				 
+		</article> 
+	</main>
+</div> 
+</div>
+
+
+
+</section>
+
+{% endblock %}
