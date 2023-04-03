@@ -37,18 +37,8 @@
   <div class="offcanvas-menu-overlay"></div>
   <div class="offcanvas-menu-wrapper">
     <div class="offcanvas__option">
-      <div class="offcanvas__links">
-        <a href="#">Sign in</a>
-        <a href="#">FAQs</a>
-      </div>
-      <div class="offcanvas__top__hover">
-        <span>Usd <i class="arrow_carrot-down"></i></span>
-        <ul>
-          <li>USD</li>
-          <li>EUR</li>
-          <li>USD</li>
-        </ul>
-      </div>
+      
+      
     </div>      
     <div id="mobile-menu-wrap"></div>    
   </div>
@@ -110,9 +100,9 @@
         <div class="col-lg-3 col-md-3">
           <div class="header__nav__option">
                         
-            <a href="#" class="search-switch"><img src="{% static 'img/icon/search.png' %}" alt=""></a>
+            
             <a href="#"><img src="{% static 'img/icon/heart.png' %}" alt=""></a>
-            <a href="#"><img src="{% static 'img/icon/cart.png' %}" alt=""> </a>
+            <a href="{% url 'cart' %}"><img src="{% static 'img/icon/cart.png' %}" alt=""> </a>
             
           </div>
         </div>
@@ -283,6 +273,10 @@
     a{
       text-decoration: none;
     }
+    .dropdown{
+      transition: 500ms!important;
+    }
+   
    </style>
 </body>
 

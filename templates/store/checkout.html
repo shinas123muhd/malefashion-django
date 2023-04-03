@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="breadcrumb-option">
+    <div class="container">
+    <div class="row">
+    <div class="col-lg-12">
+    <div class="breadcrumb__text">
+    <h4>Check Out</h4>
+    <div class="breadcrumb__links">
+    <a href="index-2.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <span>Check Out</span>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </section>
+    
+    
+    <section class="checkout spad">
+    <div class="container">
+    <div class="checkout__form">
+    <form action="#">
+    <div class="row">
+    <div class="col-lg-8 col-md-6">
+   
+    <h6 class="checkout__title">Billing Details</h6>
+    <form action = "POST">
+    <div class="row">
+    <div class="col-lg-6">
+    <div class="checkout__input">
+    <label for = "">First Name</label>
+    <input type="text" name = "first_name" class = "form-control" required>
+    </div>
+    </div>
+    <div class="col-lg-6">
+    <div class="checkout__input">
+    <label for = "">Last Name</label>
+    <input type="text" name = "first_name" class = "form-control" required>
+    </div>
+    </div>
+    </div>
+    <div class="checkout__input">
+    <label for = "">Address</label>
+    <input type="text" name = "first_name" class = "form-control" required>
+    </div>
+    <div class="checkout__input">
+    <label for = "">City</label>
+    <input type="text" name = "first_name" class = "form-control" required>
+    </div>
+    <div class="checkout__input">
+    <label for = "">State</label>
+    <input type="text" name = "first_name" class = "form-control" required>
+    </div>
+    
+    <div class="checkout__input">
+    <label for = "">Post code</label>
+    <input type="text" name = "first_name" class = "form-control" required>
+    </div>
+    <div class="row">
+    <div class="col-lg-6">
+    <div class="checkout__input">
+    <label for = "">Phone</label>
+    <input type="text" name = "first_name" class = "form-control" required>
+    </div>
+    </div>
+    
+    </div>
+    
+    
+    
+   
+    </div>
+    <div class="col-lg-4 col-md-6">
+    <div class="checkout__order">
+    <h4 class="order__title">Your order</h4>
+    <div class="checkout__order__products d-flex justify-content-between">  <div>Product</div>  <div>Quantity</div> <div>Total</div></div>
+    {% for cart_item in cart_items %}
+    <ul class="checkout__total__products">
+    <li><img src = "{{ cart_item.product.image.url}}" class = "w-25 float-start" style="margin-right:5rem">{{cart_item.quantity}} <span>${{cart_item.product.price}}</span></li>
+    {% endfor %} 
+    </ul>
+    <ul class="checkout__total__all">
+        <li>Total <span>${{total}}</span></li>
+    <li>Tax <span>${{tax}}</span></li>
+    <li><b>Grand Total <span>${{grand_total}}</span></b></li>
+    </ul>
+    <div class="checkout__input__checkbox">
+           
+    
+    </div>
+    <p>Your orders will be delivered at atmost care</p>
+    <div class="checkout__input__checkbox">
+    <label for="payment">
+    COD
+     <input type="checkbox" id="payment">
+    <span class="checkmark"></span>
+    </label>
+    </div>
+    <div class="checkout__input__checkbox">
+    <label for="paypal">
+    Paypal
+    <input type="checkbox" id="paypal">
+    <span class="checkmark"></span>
+    </label>
+    </div>
+    <button type="submit" class="site-btn">PLACE ORDER</button>
+    </div>
+    </div>
+    </div>
+    </form>
+    </div>
+    </div>
+    </section>
+
+
+{% endblock %}

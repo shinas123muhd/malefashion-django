@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "accounts",
     "category",
     "store",
+    "cart",
+    "adminpart",
 ]
 
 MIDDLEWARE = [

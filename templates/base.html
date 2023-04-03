@@ -75,29 +75,48 @@
         <div class="col-lg-6 col-md-6">
           <nav class="header__menu mobile-menu">
             <ul>
-              <!--<li class="active"><a href="index-2.html">Home</a></li>
-              <li><a href="shop.html">Shop</a></li>              
+              <li class="active"><a href="{% url 'Homepage' %}">Home</a></li>
+              <li><a href="{% url 'store' %}">Shop</a></li>              
               <li><a href="about.html">About Us</a></li>                              
               <li><a href="contact.html">Contacts</a></li>
-              <li><a href="#"><img src="{% static 'img/icon/user.png' %}" style='width:20px;' alt=""></a>
+              {% if user.id is None %}
+              
+              <li><img src="{% static 'img/icon/user.png' %}" style='width:20px;' alt="">
                 <ul class="dropdown">
-                  <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                  <li><a href="{% url 'logout' %}">logout</a></li>                                                       
+                  <li><a href="{% url 'login' %}">Login</a></li>
+                  <li><a href="{% url 'register' %}">Signup</a></li>                                                       
                 </ul>
-              </li>-->
+              </li>
             </ul>
           </nav>
+          <div class = "widget-header text-center">
+            <small class="title text-muted ">Welcome guest</small>
+          </div>
         </div>
-        <!--<div class="col-lg-3 col-md-3">
+        {% else %}
+              <li><img src="{% static 'img/icon/user.png' %}" style='width:20px;' alt="">
+                <ul class="dropdown">
+                  <li><a href="{% url 'dashboard' %}">dashboard</a></li>
+                  <li><a href="{% url 'logout' %}">logout</a></li>                                                       
+                </ul>
+              </li>
+            </ul>
+          </nav>
+          <div class = "widget-header text-center">
+            <small class="title text-muted ">Welcome {{user.username}}</small>
+          </div>
+        </div>
+        {% endif %}
+        <div class="col-lg-3 col-md-3">
           <div class="header__nav__option">
                         
-            <a href="#" class="search-switch"><img src="{% static 'img/icon/search.png' %}" alt=""></a>
+            
             <a href="#"><img src="{% static 'img/icon/heart.png' %}" alt=""></a>
-            <a href="#"><img src="{% static 'img/icon/cart.png' %}" alt=""> </a>
+            <a href="{% url 'cart' %}"><img src="{% static 'img/icon/cart.png' %}" alt=""> </a>
             
           </div>
         </div>
-      </div>-->
+      </div>
       <div class="canvas__open"><i class="fa fa-bars"></i></div>
     </div>
   </header>
@@ -192,6 +211,32 @@
 
 
     gtag('config', 'UA-23581568-13');
+
+    {% comment %} function addToCart(id, index){
+      let qtys= document.getElementsByClassName('qty')
+      let qty = +qtys[index].value
+      
+      console.log(id)
+      $.ajax({
+        url: '/add_cart/',
+        method: 'post',
+        dataType: 'json',
+        data: {
+          'product_id': id,
+          'quantity': qty,
+          'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+          // update the quantity input with the new value
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    } {% endcomment %}
+    
+    // add a click event listener to the minus button
+    
   </script>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vaafb692b2aea4879b33c060e79fe94621666317369993"
     integrity="sha512-0ahDYl866UMhKuYcW078ScMalXqtFJggm7TmlUtp0UlD4eQk0Ixfnm5ykXKvGJNFjLMoortdseTfsRT8oCfgGA=="
@@ -201,6 +246,13 @@
       a{
         text-decoration: none;
       }
+      .dropdown{
+        transition: 500ms!important;
+      }
+
+      
+      
+      
      </style>
 </body>
 

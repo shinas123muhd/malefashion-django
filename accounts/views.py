@@ -1,6 +1,6 @@
 
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import RegistrationForm,UserForm,UserProfileForm
+from .forms import RegistrationForm,UserForm, UserProfileForm
 from .models import Account,UserProfile
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
@@ -52,12 +52,16 @@ def LoginPage(request):
         email = request.POST['email']
         password = request.POST['password']
         user = auth.authenticate(email=email, password=password)
-        if user is not None:
+        if user.is_admin:
             auth.login(request,user)
-            return redirect('Homepage')
+            return render (request,'admin/adminpanel.html')
         else:
-            messages.error(request,'Invalid login credentials')
-            return redirect('login')
+            if user is not None:
+                auth.login(request,user)
+                return redirect('Homepage')
+            else:
+                messages.error(request,'Invalid login credentials')
+                return redirect('login')
     return render(request,'accounts/login.html')
 @login_required(login_url = 'login' )
 def LogoutPage(request):
@@ -149,7 +153,7 @@ def editprofilePage(request):
     if request.method =="POST":
         user_form = UserForm(request.POST, instance=request.user)
         profile_form = UserProfileForm(request.POST,request.FILES,instance=userprofile)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user_form.save()
             profile_form.save()
             messages.success(request,"Your Profile has been Updated")
