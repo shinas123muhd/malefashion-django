@@ -121,6 +121,23 @@
     </div>
   </header>
   {% block content %}
+  <div class="container">
+		<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+		</div>
+	</div>
+
+<div class="bg0 p-t-75 p-b-85">
+
+<div class="sbody">
+    <div class="scard">
+        <div style="border-radius:100px; height:100px; width:100px; background: #F8FAF5; margin:0 auto;">
+          <i class="scheckmark">✓</i>
+        </div>
+        <h1>Success</h1> 
+        <p>We received your purchase request;<br/> Order has been Completed...!</p>
+        <p><a href="{% url 'HomePage' %}" class="btn btn-primary">Contineu To Shopping....</a><p>
+    </div>
+</div>
   {% endblock %}
   <!--<footer class="footer">
     <div class="container">

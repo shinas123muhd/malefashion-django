@@ -29,22 +29,26 @@
                                 {{ user_form.username }}														
 						    </div>                            
 					     </div>
+						 <div class="form-row">
+                            <div class = "form-group col-md-6">
+                                <label>First Name</label>
+                                {{ profile_form.first_name }}														
+						    </div>                                                        
+					     </div>
+						 <div class="form-row">
+                            <div class = "form-group col-md-6">
+                                <label>Last Name</label>
+                                {{ profile_form.last_name }}														
+						    </div>                                                        
+					     </div>
+						
                          <div class="form-row">
                             <div class = "form-group col-md-6">
                                 <label>Phone number</label>
                                 {{ user_form.phone_number }}														
-						    </div>
-                            <div class = "form-group col-md-6">
-                                <label>First Name</label>
-                                {{ profile_form.first_name }}														
-						    </div>
-                            <div class = "form-group col-md-6">
-                                <label>Last Name</label>
-                                {{ profile_form.last_name }}														
-						    </div>
-                                                       					                              
-                                                        
+						    </div>                                                        
 					     </div>
+						 
                          {% include 'includes/message.html' %}
                          <input type = "submit" value = "save" class = "btn btn-primary mt-3">
                     </form>

@@ -65,6 +65,7 @@
     </div>
     </div>
     <div class="product__details__content">
+        
     <div class="container">
     <div class="row d-flex justify-content-center">
     <div class="col-lg-8">
@@ -78,7 +79,8 @@
     
     <div class='me-4' >
         
-    <select name="size" required>
+    <select name="size"  required>
+        <option value = ""diasbled selected>Choose size</option>
         {% for i in single_product.variation_set.sizes %}
         <option value = "{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
         {% endfor %}
@@ -96,6 +98,7 @@
         {% endif %}
         </div>
     </div>
+    </form>
     
     <div class="product__details__btns__option">
     <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>

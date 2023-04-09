@@ -1,0 +1,9 @@
+<div class="navbar-nav w-100">
+    <a class="list-group-item  {% if '/adminpanel/' == request.path %}active{% endif %}" href = "{% url 'adminpanel'%}">Dashboard</a>
+    <a class="list-group-item  {% if '/admincategory/' == request.path %}active{% endif %}" href = "{% url 'admincategory'%}">Categories</a>    
+    <a class="list-group-item  {% if '/adminproducts/' == request.path %}active{% endif %}" href = "{% url 'adminproducts'%}">Products</a>
+    <a class="list-group-item  {% if '/adminusers/' == request.path %}active{% endif %}" href = "{% url 'adminusers'%}">Users</a>
+    <a class="list-group-item  {% if '/adminorders/' == request.path %}active{% endif %}" href = "{% url 'adminorders'%}">Orders</a>
+    
+    
+</div>

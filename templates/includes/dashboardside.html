@@ -4,6 +4,7 @@
         <a class="list-group-item {% if '/accounts/' == request.path %}active{% endif %}" href ="{% url 'dashboard'%}">Dashboard </a>        
         <a class="list-group-item {% if '/editprofile/' == request.path %}active{% endif %}" href ="{% url 'editprofile'%}">Edit Profile </a> 
         <a class="list-group-item {% if '/changepassword/' == request.path %}active{% endif %}" href ="{% url 'changepassword'%}">Change Password </a>
+        <a class="list-group-item {% if '/addaddress/' == request.path %}active{% endif %}" href ="{% url 'addaddress'%}">Add address </a>
         <!--<a class="list-group-item" href="#">My orders </a>-->
         
     </ul>

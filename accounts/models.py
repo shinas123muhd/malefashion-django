@@ -31,6 +31,8 @@ class MyAccountManager(BaseUserManager):
 class Account(AbstractBaseUser):
     
     username         = models.CharField(max_length=50)
+    first_name       = models.CharField(max_length=20)
+    second_name      = models.CharField(max_length=20)
     email            = models.EmailField(max_length=100,unique=True)
     phone_number     = models.CharField(max_length=50)
     
@@ -61,27 +63,22 @@ class UserProfile(models.Model):
     user = models.OneToOneField(Account,on_delete=models.CASCADE)
     first_name = models.CharField(blank=True,max_length=30)
     last_name = models.CharField(blank=True,max_length=30)
-    address_line_1=models.CharField(blank=True,max_length=100)
-    address_line_2=models.CharField(blank=True,max_length=100)
     
-    city = models.CharField(blank=True,max_length=20)
-    state = models.CharField(blank=True,max_length=20)
+    
 
     def __str__(self):
-        return self.user.username
-    def full_address(self):
-        return f'{self.address_line_1} {self.address_line_2}'
+        return self.user.first_name
+    
     
 class Address(models.Model):
     profile = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
     address_line_1=models.CharField(blank=True,max_length=100)
-    address_line_2=models.CharField(blank=True,max_length=100)
-    name = models.CharField(blank=True,max_length=100)
+    address_line_2=models.CharField(blank=True,max_length=100)    
     city=models.CharField(blank=True,max_length=20)
     state=models.CharField(blank=True,max_length=20)
-    country=models.CharField(blank=True,max_length=20)
-    zip_code = models.CharField(blank=True,max_length=10)
-    phone = models.CharField(max_length=12,blank=True)
+    
+    
+    
 
 
 

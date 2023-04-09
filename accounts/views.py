@@ -1,7 +1,7 @@
 
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import RegistrationForm,UserForm, UserProfileForm
-from .models import Account,UserProfile
+from .models import Account,UserProfile,Address
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
@@ -11,6 +11,9 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
+from cart.models import Cart,CartItem
+from cart.views import _cart_id
+import requests
 
 
 # Create your views here.
@@ -52,16 +55,61 @@ def LoginPage(request):
         email = request.POST['email']
         password = request.POST['password']
         user = auth.authenticate(email=email, password=password)
-        if user.is_admin:
-            auth.login(request,user)
-            return render (request,'admin/adminpanel.html')
-        else:
-            if user is not None:
+        
+        if user is not None:
+            if user.is_admin:
                 auth.login(request,user)
-                return redirect('Homepage')
+                return render (request,'admin/adminpanel.html')
             else:
-                messages.error(request,'Invalid login credentials')
-                return redirect('login')
+                try:
+                    cart = Cart.objects.get(cart_id =_cart_id(request))
+                    is_cart_item_exists = CartItem.objects.filter(cart = cart).exists()
+                    if is_cart_item_exists:
+                        cart_item = CartItem.objects.filter(cart = cart).order_by('id')
+                        
+                        production_variation = []
+                        for item in cart_item:
+                            variation = item.variations.all()
+                            production_variation.append(list(variation))
+
+                        cart_item = CartItem.objects.filter(user = user).order_by('id')
+                        ex_var_list=[]
+                        id = []
+                        for item in cart_item:
+                            existing_variation = item.variations.all()
+                            ex_var_list.append(list(existing_variation))
+                            id.append(item.id)
+
+                        for pr in production_variation:
+                            if pr in ex_var_list:
+                                index = ex_var_list.index(pr)
+                                item_id = id[index]
+                                item = CartItem.objects.get(id = item_id)
+                                item.quantity += 1
+                                item.user = user
+                                item.save()
+                            else:
+                                cart_item = CartItem.objects.filter(cart = cart).order_by('id')
+                                for item in cart_item:
+                                    item.user = user
+                                    item.save()
+
+                except:
+                    pass
+                auth.login(request,user)
+                url = request.META.get('HTTP_REFERER')
+                try:
+
+                    query = requests.utils.urlparse(url).query
+                    params = dict(x.split('=') for x in query.split('&'))
+                    if 'next' in params:
+                        nextPage = params['next']
+                        return redirect(nextPage)
+                except:
+                    return redirect('Homepage')
+        else:
+            messages.error(request,'Invalid login credentials')
+            return redirect('login')
     return render(request,'accounts/login.html')
 @login_required(login_url = 'login' )
 def LogoutPage(request):
@@ -152,10 +200,11 @@ def editprofilePage(request):
         userprofile = None
     if request.method =="POST":
         user_form = UserForm(request.POST, instance=request.user)
-        profile_form = UserProfileForm(request.POST,request.FILES,instance=userprofile)
-        if user_form.is_valid():
-            user_form.save()
+        profile_form = UserProfileForm(request.POST,instance=userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save() 
             profile_form.save()
+            
             messages.success(request,"Your Profile has been Updated")
             return redirect('editprofile')
     else:
@@ -193,5 +242,28 @@ def ChangepasswordPage(request):
             
 
     return render(request,'accounts/changepassword.html')
+
+def add_address(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            user = request.user
+            profile = UserProfile.objects.get(user = user)
+            Address.objects.create(
+                profile=profile,
+                address_line_1=request.POST['address_line_1'],
+                address_line_2=request.POST['address_line_2'],                
+                city=request.POST['city'],
+                state=request.POST['state'],
+                
+            )
+            messages.success(request,"Successfully added address")
+            return redirect('dashboard')
+            
+        else:
+            return render(request, 'accounts/addaddress.html')
+    else:
+        return redirect('login')
+
+
 
     

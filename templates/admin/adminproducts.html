@@ -1,40 +1,57 @@
 {% extends 'admin/adminbase.html' %}
 {% block content %}
 <div class="col-12">
-    <div class="col-sm-12 col-xl-6">
-        <div class="bg-bg-white rounded h-100 p-4">
-            <h6 class="mb-4">Bordered Table</h6>
-            <table class="table table-bordered">
+    <div class="bg-white rounded h-100 p-4">
+        
+        <div class="table-responsive">
+            <table class="table">
                 <thead>
+
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First Name</th>
-                        <th scope="col">Last Name</th>
-                        <th scope="col">Email</th>
+                        <th scope="col">Product Id</th>
+                        <th scope="col">Product Image</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Stock available</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Edit</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for Product in Products %}
                     <tr>
-                        <th scope="row">1</th>
-                        <td>John</td>
-                        <td>Doe</td>
-                        <td>jhon@email.com</td>
+                        
+                        <td>{{Product.id}}</td> 
+                        <td><img class="rounded-circle" src={{ Product.image.url }} alt="" style="width: 140px; height: 160px;">
+                            
+                        </td>
+                        <td>{{Product.product_name}}</td>
+                        <td>{{Product.stock}}</td>
+                        <td>{{Product.category}}</td>
+                        <td>${{Product.price}}</td>
+                        
+                        <td>
+                            {% if Product.stock %}
+                            <span>Available</span>
+                            {% else %}
+                            <span>Out of stock</span>
+                            {% endif%}
+                        </td>
+                        <td>
+                            <a href="{% url 'editproduct' Product.id %}"><button class="btn btn-success m-2" type="button">Edit</button></a>
+                        </td>
+                        <td>
+                            <a href="{% url 'dltproduct' Product.id %}"><button class="btn btn-primary m-2" type="button">Delete</button></a>
+                        </td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>mark@email.com</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>jacob@email.com</td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
+            <a href="{% url 'addproduct'%}"><button class="btn btn-secondary m-2" type="button">Add product</button></a>
         </div>
     </div>
-
+</div>
+</div>
+</div>
 {% endblock %}

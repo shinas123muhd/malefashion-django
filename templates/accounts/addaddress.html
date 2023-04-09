@@ -1,4 +1,65 @@
 {% extends 'base.html' %}
+
+
 {% block content %}
+
+<section class="section-conten padding-y bg">
+
+{% include 'includes/message.html' %}
+<div class="container">
+	<div class="row">
+	{% include 'includes/dashboardside.html' %}
+	<main class="col-md-9">
+		<article class="card">
+		<header class="card-header">
+			<strong class="d-inline-block mr-3">Change Password</strong>
+			<span>{{ user.username }}</span>
+		</header>
+		<div class="card-body">
+            
+            
+			<div class="row">
+			<div class="col-md-12">
+					<form action="{% url 'addaddress'%}"method="POST">
+                        {% csrf_token %}						
+					     
+                                                       					                              
+                            <div class = "form-group mb-3">
+                                <label>Address_line_1</label>
+                                <input type = "text" name="address_line_1"	placeholder="Address_line_1" class="form-control" required>													
+						    </div>
+                            <div class = "form-group mb-3">
+                                <label>Address_line_2</label>
+                                <input type = "text" name="address_line_2"	placeholder="address_line_2" class="form-control" >													
+						    </div>
+                            <div class = "form-group mb-3">
+                                <label>City</label>
+                                <input type = "text" name="city"	placeholder="city" class="form-control" required>													
+						    </div>
+                            <div class = "form-group mb-3">
+                                <label>State</label>
+                                <input type = "text" name="state"	placeholder="state" class="form-control" required>													
+						    </div>
+                             
+                                                          
+					                                 					                              
+                                                        
+					     </div>
+                         <input type = "submit" value = "submit" class = "btn btn-primary mt-3">
+                    </form>
+                    {% include 'includes/message.html' %}
+            </div>											
+			</div>
+        </div> 
+		
+				 
+		</article> 
+	</main>
+</div> 
+</div>
+
+
+
+</section>
 
 {% endblock %}

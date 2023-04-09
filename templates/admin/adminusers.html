@@ -1,5 +1,52 @@
 {% extends 'admin/adminbase.html' %}
 {% block content %}
-
+<div class="col-12">
+    <div class="bg-white rounded h-100 p-4">
+        
+        <div class="table-responsive">
+            <table class="table table-bordered align-items-center">
+                <thead>
+                    <tr class="text-dark ">
+                        
+                        <th scope="col">Username</th>
+                        
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone Number</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody class = "text-dark ">
+                    {% for User in Users %}
+                    <tr>
+                        
+                        <td>{{User.username}}</td>
+                        
+                        <td>{{User.email}}</td>
+                        <td>{{User.phone_number}}</td>
+                        {% if User.is_active %}
+                        <td class = text-success>Active</td>
+                        {% else %}
+                        <td class = text-danger>Blocked</td>
+                        {% endif %}
+                        
+                        <td>
+                        {% if User.is_active %}
+                            <a href="{% url 'blockuser'  User.id 'block' %}"><button class="btn btn-primary m-2"  type="button">Block</button></a>
+                        {% else %}
+                            <a href="{% url 'blockuser'  User.id 'unblock' %}"><button class="btn btn-success m-2" type="button">Unblock</button></a>
+                        {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
 
 {% endblock %}
