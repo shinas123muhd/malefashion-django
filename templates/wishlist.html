@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+
+
+{% load static %}
+
+{% block content %}
+<script>
+    document.getElementById('preloder').style.display = 'none'
+</script>
+    
+    {% if not wlist_items %}
+    <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6 text-center">
+            
+            <h2 class="mt-4">Your Wishlist is Empty</h2>
+            <p class="lead">Looks like you haven't added anything to your list yet.</p>
+            <a href="{% url 'store' %}" class="btn btn-primary btn-lg mt-3">Continue Shopping</a>
+          </div>
+        </div>
+      </div>
+    {% else %}
+    <section class="shopping-cart spad">
+    <div class="container">
+    <div class="row">
+    <div class="col-lg-8">
+    <div class="shopping__cart__table">
+    
+    <table>
+    <thead>
+    <tr>
+    <th>Product</th>
+    
+    <th>Price</th>
+    <th></th>
+    <th>add to cart</th>
+    
+    </tr>
+    </thead>
+    <tbody>
+    {% for wlist_item in wlist_items %}
+    <tr>
+    <td class="">
+    <div class="">
+    <img src="{{ wlist_item.product.image.url }}" class='w-25' alt="">
+    </div>
+    <div class="product__cart__item__text">
+    <h6>{{ wlist_item.product.product_name }}</h6>
+    
+    
+    </div>
+   
+    
+    </td>    
+     
+    
+    <td>${{ wlist_item.product.price }}</td>
+    
+    <td >
+        <form action="{% url 'removewish' wlist_item.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" onclick ="return confirm ('Are you sure you want to remove this item')" class="btn btn-danger"><i class="fa fa-close"></i></button>
+        </form>
+      </td>
+    <td>
+        <a href="{{ wlist_item.product.get_url }}" class="primary-btn">Details</a>
+    </td>
+    </tr>
+    {% endfor %}
+    
+    
+    </tbody>
+    </table>
+    </div>
+    <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6">
+    <div class="continue__btn">
+    <a href="{% url 'store' %}">Continue Shopping</a>
+    </div>
+    </div>
+    
+    </div>
+    </div>
+    
+    </div>
+    </section>
+    {% endif %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'vendor/sweetalert/sweetalert.min.js' %}"></script>
+    
+    
+
+{% endblock %}

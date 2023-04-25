@@ -1,5 +1,59 @@
 {% extends 'admin/adminbase.html' %}
 {% block content %}
-
+<div class="col-12">
+    <div class="bg-white rounded h-100 p-4">
+        
+        <div class="table-responsive">
+            <table class="table table-bordered align-items-center">
+                <thead>
+                    <tr class="text-dark ">
+                        
+                        <th scope="col">Username</th>
+                        
+                        <th scope="col">Payment method</th>
+                        <th scope="col">Order number</th>
+                        <th scope="col">Order Total</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Condition</th>
+                        <th scope="col">Cancel</th>
+                        <th scope="col">View Orders</th>
+                    </tr>
+                </thead>
+                <tbody class = "text-dark ">
+                    {% for Order in Orders %}
+                    <tr>
+                        
+                        <td>{{Order.user.username}}</td>
+                        
+                        <td>COD</td>
+                        <td>{{Order.order_number}}</td>
+                        <td>{{Order.order_total}}</td>  
+                        <td>{{Order.status}}</td>                      
+                        <td>
+                           
+                            {% if Order.status == 'New' %}
+                            <a href = "{% url 'orderstatus' Order.id 'Packed' %}"><button class="btn btn-light m-2" type="button">Packed</button></a>
+                            {% elif Order.status == 'Packed' %}
+                            <a href = "{% url 'orderstatus' Order.id 'Shipped' %}"><button class="btn btn-secondary m-2" type="button">Shipped</button></a>
+                            {% elif Order.status == 'Shipped' %}
+                            <a href = "{% url 'orderstatus' Order.id 'Delivered' %}"><button class="btn btn-success m-2 " type="button">Delivered</button></a>
+                            {% elif Order.status == 'Delivered' %}
+                            <button class="btn btn-success m-2" type="button">Completed</button>
+                            
+                            {% endif %}
+                        </td>
+                        <td><a href = "{% url 'cancelorder' Order.id  %}"><button class="btn btn-danger m-2 " type="button">Cancel</button></a></td>
+                        <td><a href = "{% url 'vieworder' Order.id  %}"><button class="btn btn-danger m-2 " type="button">ViewOrder</button></a></td>
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
 
 {% endblock %}

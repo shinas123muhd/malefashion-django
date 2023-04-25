@@ -152,6 +152,6 @@ MESSAGE_TAGS = {
 # smtp configuration for email verification
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "malefashion10@gmail.com"
-EMAIL_HOST_PASSWORD = "lowhcwiscchnzols"
+EMAIL_HOST_USER = "shinascancode@gmail.com"
+EMAIL_HOST_PASSWORD = "lcooziqklesrchwx"
 EMAIL_USE_TLS = True

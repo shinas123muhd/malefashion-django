@@ -17,17 +17,38 @@
     </div>
     </div>
     </section>
+    <div class="row m-3">
+        {% for Address in Addresses %}
+        <div class = col-sm-4>
+        <div class="card">
+          <input class="form-check-input" type="radio" name="address" id="address{{ Address.id }}" value="{{ Address.id }}">
+            <div class="card-body">
+              <div class="address-row">
+                
+                <div class="address-info">
+                  
+                  <p class="card-text">{{Address.address_line_1}}</p>
+                  <p class="card-text">{{Address.address_line_2}}</p>
+                  <p class="card-text">{{Address.city}}, {{Address.state}}</p>
+                  <p class="card-text">{{Address.Pincode}}, {{Address.phone}}</p>
+                </div>
+              </div>
+            </div>
+            
+        </div>
+          </div>
+        {% endfor %}
     
     
     <section class="checkout spad">
     <div class="container">
     <div class="checkout__form">
-    <form action="#">
+    
     <div class="row">
     <div class="col-lg-8 col-md-6">
    
     <h6 class="checkout__title">Billing Details</h6>
-    <button type="submit" class="site-btn w-50">SELECT SAVED ADDRESS</button>
+    
     <form action ="{% url 'placeorder'%}" method = "POST">
         {% csrf_token %}
     <div class="row mt-5" >
@@ -60,9 +81,14 @@
     <label for = "">State</label>
     <input type="text" name = "state" class = "form-control" required>
     </div>
-    
-    
-    
+    <div class="checkout__input">
+    <label for = "">Pincode</label>
+    <input type="text" name = "pincode" class = "form-control" required>
+    </div>
+    <div class="checkout__input">
+    <label for = "">Email</label>
+    <input type="email" name = "email" class = "form-control" required>
+    </div>    
     <div class="col-lg-6">
     <div class="checkout__input">
     <label for = "">Phone</label>
@@ -90,23 +116,36 @@
     </div>
     <p>Your orders will be delivered at atmost care</p>
     <div class="checkout__input__checkbox">
-    <label for="payment">
-    COD
-     <input type="checkbox" id="payment">
-    <span class="checkmark"></span>
-    </label>
-    </div>
+      <label for="cod">
+          COD
+          <input type="radio" id="cod" name="payment_option" value="cod" required>
+          <span class="checkmark"></span>
+      </label>
+      <label for="paypal">
+          PAYPAL
+          <input type="radio" id="paypal" name="payment_option" value="paypal" required>
+          <span class="checkmark"></span>
+      </label>
+  </div>
     
     
-    <button type="submit" class="site-btn">PLACE ORDER</button>
-</form>
-    </div>
-    </div>
-    </div>
+    <button type="submit" class="site-btn">PAYMENT PAGE</button>
     </form>
+    </div>
+    </div>
+    </div>
+    
     </div>
     </div>
     </section>
 
-
+    <script>
+      $('input[name="payment_option"]').on('change', function() {
+          if ($(this).val() == "cod") {
+              $('form').attr('action', '{% url "cod" %}');
+          } else if ($(this).val() == "paypal") {
+              $('form').attr('action', '{% url "paypal" %}');
+          }
+      });
+  </script>
 {% endblock %}

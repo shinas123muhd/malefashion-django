@@ -58,41 +58,18 @@
     <div class="card-body">
     <div class="shop__sidebar__price">
     <ul>
-    <li><a href="#">$0.00 - $50.00</a></li>
-    <li><a href="#">$50.00 - $100.00</a></li>
-    <li><a href="#">$100.00 - $150.00</a></li>
-    <li><a href="#">$150.00 - $200.00</a></li>
-    <li><a href="#">$200.00 - $250.00</a></li>
-    <li><a href="#">250.00+</a></li>
+    <li><a href="{% url 'filter_price' 0 50  %}">$0.00 - $50.00</a></li>
+    <li><a href="{% url 'filter_price' 50 100  %}">$50.00 - $100.00</a></li>
+    <li><a href="{% url 'filter_price' 100 150  %}">$100.00 - $150.00</a></li>
+    <li><a href="{% url 'filter_price' 150 200  %}">$150.00 - $200.00</a></li>
+    <li><a href="{% url 'filter_price' 200 250  %}">$200.00 - $250.00</a></li>
+    
     </ul>
     </div>
     </div>
     </div>
     </div>
-    <div class="card">
-    <div class="card-heading">
-    <a data-toggle="collapse" data-target="#collapseFour">Size</a>
-    </div>
-    <div id="collapseFour" class="collapse show" data-parent="#accordionExample">
-    <div class="card-body">
-    <div class="shop__sidebar__size">
-     <label for="xs">xs
-    <input type="radio" id="xs">
-    </label>
-    <label for="sm">s
-    <input type="radio" id="sm">
-    </label>
-    <label for="md">m
-    <input type="radio" id="md">
-    </label>
-    <label for="xl">xl
-    <input type="radio" id="xl">
-    </label>
     
-    </div>
-    </div>
-    </div>
-    </div>
     
         </div>
     </div>
@@ -120,7 +97,7 @@
     <div class="product__item">
     <div class="product__item__pic set-bg" data-setbg="{{ product.image.url }}">
     <ul class="product__hover">
-    <li><a href="#"><img src="{% static 'img/icon/heart.png' %}" alt="Wishlist"></a></li>
+    <li><a href="{% url 'addwish' product.id %}"><img src="{% static 'img/icon/heart.png' %}" alt="Wishlist"></a></li>
     
     
     </ul>

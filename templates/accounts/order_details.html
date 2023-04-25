@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<section class="section-conten padding-y bg">
+
+{% include 'includes/message.html' %}
+<div class="container">
+	<div class="row">
+	{% include 'includes/dashboardside.html' %}
+	<main class="col-md-9">
+		<article class="card">
+		<header class="card-header">
+			<strong class="d-inline-block mr-3">Order Details</strong>
+			
+		</header>
+		 
+		<div class="table-responsive">
+            <table class="table table-bordered align-items-center">
+                <thead>
+					
+                    <tr class="text-dark ">
+                        
+                        <th scope="col">Order Id</th>
+                        
+                        <th scope="col">Transaction Id</th>
+                        <th scope="col">Order Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+						<th scope="col">Print Invoice</th>
+                    </tr>
+                </thead>
+                <tbody class = "text-dark ">
+                    {% for Order in Orders %}
+                    <tr>
+                        <td>{{Order.order_number}}</td>
+                        <td>khgkhj</td>
+						<td>{{Order.created_at}}</td> 
+						<td>{{Order.status}}</td>
+						<td>
+							<a href = "{% url 'cancelorderuser' Order.id %}"><button class="btn btn-danger m-2" type="button">Cancel</button></a>
+							<a href = "#"><button class="btn btn-warning m-2 " type="button">Return</button></a>
+							
+						</td>  
+						<td>
+							<a href = "#"><button class="btn btn-info m-2 " type="button">Invoice</button></a>
+						</td>                          
+                    </tr> 
+					{% endfor %}                   
+                </tbody>
+            </table>
+        </div>
+				 
+		</article> 
+	</main>
+</div> 
+</div>
+
+
+
+</section>
+
+{% endblock %}

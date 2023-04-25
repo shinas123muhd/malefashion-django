@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="{% static 'css/slicknav.min.css'%}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
+  <script src="https://www.paypal.com/sdk/js?client-id=Abncpe5al1F3RfqSJ8k50pL4eyAjGMtjtqZYT1TJc97jtYQyjJrvmCqcT1GE-JVBaMyF4Lty1FOO_5nJ&currency=USD"></script>
 
   <script src="https://kit.fontawesome.com/6819033383.js" crossorigin="anonymous"></script>
 
@@ -111,7 +112,7 @@
           <div class="header__nav__option">
                         
             
-            <a href="#"><img src="{% static 'img/icon/heart.png' %}" alt=""></a>
+            <a href="{% url 'wishlist' %}"><img src="{% static 'img/icon/heart.png' %}" alt=""></a>
             <a href="{% url 'cart' %}"><img src="{% static 'img/icon/cart.png' %}" alt=""> </a>
             
           </div>
@@ -219,6 +220,7 @@
   <script src="{% static 'js/mixitup.min.js' %}"></script>
   <script src="{% static 'js/owl.carousel.min.js' %}"></script>
   <script src="{% static 'js/main.js' %}"></script>
+  
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
   <script>
@@ -266,7 +268,15 @@
       .dropdown{
         transition: 500ms!important;
       }
-
+      .address-row {
+        display: flex;
+        align-items: center;
+      }
+      
+      .address-info {
+        flex: 1;
+        margin-left: 1rem;
+      }
       
       
       
