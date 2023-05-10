@@ -1,14 +1,48 @@
 import os
 from django.shortcuts import render, redirect
 from accounts.models import Account
-from store.models import Product
+from store.models import Product,Offer
 from category.models import Category
 from django.contrib.auth.decorators import login_required
-from orders.models import Order
+from orders.models import Order,OrderProduct,Payment
+from .models import Coupon
+from datetime import datetime,timedelta
+from django.db.models import Sum
+from django.contrib import messages
 
 
 # Create your views here.
 def AdminPanel(request):
+    if request.user.is_superadmin:
+        Products = Product.objects.all()
+        OrderedProducts = OrderProduct.objects.filter(ordered=True)
+        today = datetime.today()
+        start_of_week = today - timedelta(days=today.weekday())
+        
+        dates = [start_of_week + timedelta(days=i) for i in range(7)]
+
+        sales = []
+        for date in dates:
+            orders = OrderProduct.objects.filter(
+                ordered=True,
+                created_at__year=date.year,
+                created_at__month=date.month,
+                created_at__day=date.day,
+            )
+            total_sales = sum(order.product_price * order.quantity for order in orders)
+            sales.append(total_sales)
+        
+        
+
+        context = {
+            "Products": Products,
+            "OrderedProducts":OrderedProducts,
+            "dates":dates,
+            "sales":sales
+            
+        }
+        return render(request,'admin/adminpanel.html',context)
+    
     return render(request, "admin/adminpanel.html")
 
 
@@ -129,7 +163,7 @@ def AddProduct(request):
                 "Products": Products,
                 "product_count": product_count,
             }
-            return render(request, "admin/addproduct.html", context)
+            return render(request, "admin/adminproducts.html", context)
         else:
             context = {
                 "Categories": Categories,
@@ -171,10 +205,24 @@ def EditProduct(request, id):
 def AdminOrders(request):
     if request.user.is_authenticated:
         Orders = Order.objects.filter(is_ordered = True).order_by("-id")
+        
         order_count = Orders.count()
+
+        for order in Orders:
+            payment_method = ""
+            if order.payment:
+                payment_method = order.payment.payment_method
+            else:
+                payment_method = "COD"
+            
+            order.payment_method = payment_method
+        
+        
         context = {
             "Orders": Orders,
             "order_count": order_count,
+            
+            
         }
         return render(request, "admin/adminorders.html", context)
     else:
@@ -214,7 +262,15 @@ def OrderStatus(request, id, action):
 
 def cancelOrder(request, id):
     if request.user.is_authenticated:
-        order = Order.objects.filter(id=id)
+        order = Order.objects.get(id=id)        
+        order_products = OrderProduct.objects.filter(order=order)       
+        for order_product in order_products:
+            product = order_product.product
+            
+            product.stock += order_product.quantity
+            
+            
+            product.save()        
         order.delete()
         return redirect("adminorders")
     else:
@@ -223,10 +279,173 @@ def cancelOrder(request, id):
 
 def viewOrderItems(request, id):
     if request.user.is_authenticated:
+        
         Orders = Order.objects.filter(id=id).order_by("-id")
-        order_number = Orders.count()
+        ordered_products = OrderProduct.objects.filter(order_id = id)
+        order_count = Orders.count()
         context = {
             "Orders": Orders,
-            "order_number": order_number,
+            "order_count": order_count,
+            "ordered_products":ordered_products,
         }
         return render(request, "admin/vieworders.html", context)
+    else:
+        return redirect('login')
+def createcoupon(request):
+    if request.user.is_superadmin:
+        if request.method == "POST":
+            coupon_code = request.POST['coupon_code']
+            min_amount = request.POST['min_amount']
+            active_date_str = request.POST['active_date']
+            expire_date_str = request.POST['expire_date']
+            discount_amount = request.POST['discount_amount']
+
+            active_date = datetime.strptime(active_date_str, "%m/%d/%Y").date()
+            expire_date = datetime.strptime(expire_date_str, "%m/%d/%Y").date()
+
+            Coupon.objects.create(
+                coupon_code = coupon_code,
+                min_amount = min_amount,
+                active_date = active_date,
+                expire_date = expire_date,
+                discount_amount = discount_amount
+
+            )
+            coupons = Coupon.objects.all().order_by('-id')
+            coupon_count = coupons.count()
+            context = {
+                'coupons':coupons,
+                'coupon_count':coupon_count
+            }
+            return render(request,'admin/coupons.html',context)
+        else:
+            return render(request,'admin/addcoupon.html')
+    else:
+        return redirect('login')
+
+
+def coupon(request):
+    if request.user.is_authenticated:
+        coupons = Coupon.objects.all().order_by('-id')
+        coupon_count = coupons.count()
+        context = {
+            'coupons':coupons,
+            'coupon_count':coupon_count
+        }
+        return render(request,'admin/coupons.html',context)
+    else:
+        return redirect('login')
+    
+def deletecoupon(request,id):
+    if request.user.is_superadmin:
+        Acoupon = Coupon.objects.filter(id=id)
+        Acoupon.delete()
+        return redirect('coupon')
+    else:
+        return redirect('login')
+    
+
+def filterOrders(request,start_date_str,end_date_str):
+    if request.method =="POST":
+        start_date_str = request.POST['start_date']
+        end_date_str = request.POST['end_date']
+        start_date = datetime.strptime(start_date_str, "%m/%d/%Y").date()
+        end_date = datetime.strptime(end_date_str, "%m/%d/%Y").date()
+        if start_date > end_date:
+            messages.error(request,'Starting date should be less')
+            return redirect('adminreport')
+        filteredorders = Order.objects.filter(created_at__gte=start_date, created_at__lte=end_date,is_ordered = True).order_by('-created_at')
+        for order in filteredorders:
+            payment_method = ""
+            if order.payment:
+                payment_method = order.payment.payment_method
+            else:
+                payment_method = "COD"
+            
+            order.payment_method = payment_method
+        context ={
+            'filteredorders':filteredorders,
+        }
+        
+        
+        return render(request,'admin/adminreport.html',context)
+    
+def adminreport(request):
+    if request.user.is_authenticated:
+        Orders = Order.objects.filter(is_ordered = True).order_by("-id")
+        
+        order_count = Orders.count()
+
+        for order in Orders:
+            payment_method = ""
+            if order.payment:
+                payment_method = order.payment.payment_method
+            else:
+                payment_method = "COD"
+            
+            order.payment_method = payment_method
+        
+        
+        context = {
+            "Orders": Orders,
+            "order_count": order_count,
+            
+            
+        }
+        return render(request, "admin/adminreport.html", context)
+    else:
+        return redirect("login")
+    
+def addoffer(request):
+    if request.user.is_superadmin:
+        products = Product.objects.all()
+        if request.method =="POST":
+            discount = request.POST["discount"]                      
+            product_id = request.POST["product"]
+            product = Product.objects.get(id=product_id)
+            new_offer = Offer.objects.create(
+                discount = discount,
+                product=product
+            )
+            offers = Offer.objects.all().order_by('-id')
+            context ={
+                'offers':offers,
+
+            }
+            return render(request,'admin/adminoffer.html',context)
+        else:
+            context = {
+                'products':products,
+            }
+            return render(request,'admin/addoffer.html',context)
+    return redirect('login')
+
+def adminoffers(request):
+    if request.user.is_superadmin:
+        offers = Offer.objects.all().order_by('-id')
+        context ={
+            'offers':offers,
+        }
+        return render(request,'admin/adminoffer.html',context)
+    else:
+        return redirect('login')
+    
+def deleteoffers(request,offer_id):
+    if request.user.is_superadmin:
+        offer = Offer.objects.get(id=offer_id)
+        offer.delete()
+        return redirect('adminoffers')
+    else:
+        return redirect('login')
+
+    
+
+
+    
+
+
+    
+    
+
+
+

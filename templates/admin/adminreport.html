@@ -1,0 +1,106 @@
+{% extends 'admin/adminbase.html' %}
+{% block content %}
+<div class="container-fluid pt-4 px-4" >
+    <div class="row g-4">
+    <div class="col-sm-12 col-xl-12">
+        <div class="bg-black rounded h-100 p-4">
+            <h6 class="mb-4">Filter Orders by Date</h6>
+            <form action="{% url 'filterorders' 'start_date_str' 'end_date_str'%}" method="POST" >
+            {% csrf_token %}
+            
+            
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control datepicker" id="start_date" name="start_date" required>
+                <label for="floatingInput">Start Date</label>
+              </div>
+              
+            <div class="form-floating mb-3">
+               <input type="text" class="form-control datepicker" id="end_date" name="end_date" required>
+               <label for="floatingInput">Expire Date</label>
+            </div>   
+                
+            <button type="submit" class="btn btn-primary">Filter</button>
+            
+            </form>
+            <button onclick="downloadPDF()" style="background-color: blue; color: white; padding: 10px; border: none; border-radius: 5px;">Download PDF</button>
+        </div>
+    </div>
+    </div>
+    </div>
+        
+        <div class="table-responsive"id ="topdf">
+            <table class="table table-bordered align-items-center">
+                <thead>
+                    <tr class="text-black ">
+                        
+                        <th scope="col">Username</th>
+                        
+                        <th scope="col">Payment method</th>
+                        <th scope="col">Order Date</th>
+                        <th scope="col">Order number</th>
+                        <th scope="col">Order Total</th>
+                        <th scope="col">Status</th>
+                        
+                        
+                        
+                    </tr>
+                </thead>
+                <tbody class = "text-black ">
+            
+            {% for Order in filteredorders %}
+            <tr>
+                <td>{{Order.user.username}}</td>
+                <td>{{Order.payment_method}}</td>
+                <td>{{Order.created_at}}</td>
+                <td>{{Order.order_number}}</td>
+                <td>{{Order.order_total}}</td>  
+                <td>{{Order.status}}</td>                      
+                
+                
+                
+            </tr>
+        {% endfor %}
+        
+                    
+                    
+                    
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock %}
+{% block script %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.6/jspdf.plugin.autotable.min.js"></script>
+    
+<script>
+    $(function() {
+      $("#start_date").datepicker();
+      $("#end_date").datepicker();
+    });
+</script>
+    
+<script>  
+    function downloadPDF() {
+        const element = document.getElementById('topdf');
+    
+      // configure the html2pdf options
+        const options = {
+          filename: 'Invoice.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+    
+      // convert the element to PDF
+      html2pdf().from(element).set(options).save();
+    }
+</script>
+{% endblock %}

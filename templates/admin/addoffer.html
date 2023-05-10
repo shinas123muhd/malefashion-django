@@ -1,0 +1,36 @@
+{% extends 'admin/adminbase.html' %}
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+    <div class="col-sm-12 col-xl-12">
+        <div class="bg-white rounded h-100 p-4">
+            <h6 class="mb-4">Add New Product</h6>
+            <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="discount" id="discount" required>
+                <label for="floatingInput">Discount Amount</label>
+            </div>             
+            <div class="form-floating mb-3">
+                <select
+                  class="form-select"
+                  name="product"
+                  id="product"
+                  aria-label="Floating label select example"
+                  required
+                >
+                  <option selected disabled></option>
+                  {% for i in products %}
+                  <option value="{{i.id}}">{{i.product_name}}</option>
+                  {% endfor %}
+                </select>
+                <label for="floatingSelect">Select Product</label>
+              </div>
+              <button type="submit" class="btn btn-primary">Add Offer</button>
+            </form>
+        </div>
+    </div>
+    </div>
+    </div>
+
+{% endblock %}

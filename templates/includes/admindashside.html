@@ -4,6 +4,33 @@
     <a class="list-group-item  {% if '/adminproducts/' == request.path %}active{% endif %}" href = "{% url 'adminproducts'%}">Products</a>
     <a class="list-group-item  {% if '/adminusers/' == request.path %}active{% endif %}" href = "{% url 'adminusers'%}">Users</a>
     <a class="list-group-item  {% if '/adminorders/' == request.path %}active{% endif %}" href = "{% url 'adminorders'%}">Orders</a>
+    <a class="list-group-item  {% if '/coupon/' == request.path %}active{% endif %}" href = "{% url 'coupon'%}">Coupons</a>
+    
     
     
 </div>
+
+
+{% comment %} <div class="navbar-nav w-100">
+    <a href="{% url 'adminpanel' %}" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+    <a href="{% url 'users' %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Users</a>
+    <a href="{% url 'orders' %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Orders</a>
+    <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Categories</a>
+        <div class="dropdown-menu bg-transparent border-0">
+            <a href="{% url 'category' %}" class="dropdown-item">Catagory List</a>
+            <a href="{% url 'addcategory' %}" class="dropdown-item">Add Category</a>
+        </div>
+    </div>
+    <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Product List</a>
+        <div class="dropdown-menu bg-transparent border-0">
+            <a href="{% url 'adminproducts' %}" class="dropdown-item">Product List</a>
+            <a href="{% url 'adminaddproduct' %}" class="dropdown-item">Add New Product</a>
+            <a href="{% url 'productvar' %}" class="dropdown-item">product Variations</a>
+            <a href="{% url 'multipleimages' %}" class="dropdown-item">Add Multiple Images</a>
+        </div>
+    </div>
+    <a href="{% url 'addcoupon' %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Add Coupon</a>
+    <a href="{% url 'slideshow' %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Banner</a>
+</div> {% endcomment %}

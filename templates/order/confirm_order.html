@@ -37,7 +37,7 @@
     <div class="checkout__order__products d-flex justify-content-between">  <div>Product</div>  <div>Quantity</div> <div>Total</div></div>
     {% for cart_item in cart_items %}
     <ul class="checkout__total__products">
-    <li><img src = "{{ cart_item.product.image.url}}" class = "w-25 float-start" style="margin-right:5rem">{{cart_item.quantity}} <span>${{cart_item.product.price}}</span></li>
+    <li><img src = "{{ cart_item.product.image.url}}" class = "w-25 float-start" style="margin-right:5rem">{{cart_item.quantity}} {% if product.discount_price %}<span>${{cart_item.product.discount_price}}</span>{% else %}<span>${{cart_item.product.discount_price}}</span>{% endif %}</li>
     {% endfor %} 
     </ul>
     <ul class="checkout__total__all">

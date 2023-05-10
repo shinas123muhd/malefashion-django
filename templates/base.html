@@ -77,9 +77,10 @@
           <nav class="header__menu mobile-menu">
             <ul>
               <li class="active"><a href="{% url 'Homepage' %}">Home</a></li>
-              <li><a href="{% url 'store' %}">Shop</a></li>              
-              <li><a href="about.html">About Us</a></li>                              
-              <li><a href="contact.html">Contacts</a></li>
+              <li class ="active"><a href="{% url 'store' %}">Shop</a></li>              
+              <li class="active"><a href="{% url 'aboutus' %}">About Us</a></li>                              
+              <li class="active"><a href="{% url 'contactus' %}">Contacts</a></li>
+              
               {% if user.id is None %}
               
               <li><img src="{% static 'img/icon/user.png' %}" style='width:20px;' alt="">
@@ -223,6 +224,8 @@
   
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+  {% block script %}
+  {% endblock %}
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
@@ -257,10 +260,7 @@
     // add a click event listener to the minus button
     
   </script>
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vaafb692b2aea4879b33c060e79fe94621666317369993"
-    integrity="sha512-0ahDYl866UMhKuYcW078ScMalXqtFJggm7TmlUtp0UlD4eQk0Ixfnm5ykXKvGJNFjLMoortdseTfsRT8oCfgGA=="
-    data-cf-beacon='{"rayId":"7ab37c793b732e8f","token":"cd0b4b3a733644fc843ef0b185f98241","version":"2023.2.0","si":100}'
-    crossorigin="anonymous"></script>
+  
     <style>
       a{
         text-decoration: none;
@@ -277,6 +277,32 @@
         flex: 1;
         margin-left: 1rem;
       }
+      .magnifier-lens {
+        position:absolute;
+        width:150px;
+        height:100px;
+        background-color:#ff980030;
+        border: .1px solid #ffa500;
+        
+     }
+      .magnifier-lens.active {
+       
+      
+      
+     }
+     .magnified-img {
+       position:absolute;
+       width: 30%;
+       height: 60%;
+       right: 10%;
+       background-color:#ff980030;
+       transform : scale(0.5);
+       
+     }
+     .magnified-img.active {
+      
+      transform : scale(1);
+     }
       
       
       

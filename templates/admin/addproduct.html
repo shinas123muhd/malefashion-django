@@ -1,51 +1,131 @@
-{% extends 'admin/adminbase.html' %}
-{% block content %}
+{% extends 'admin/adminbase.html' %} {% load static %} {% block content %}
 <div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
+  <div class="row g-4">
     <div class="col-sm-12 col-xl-12">
-        <div class="bg-white rounded h-100 p-4">
-            <h6 class="mb-4">Add New Product</h6>
-            <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" name="product_name" id="product_name" required>
-                <label for="floatingInput">Product Name</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="description" name="description" required>
-                <label for="floatingInput">Description</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="number" class="form-control" name="price" id="price" required>
-                <label for="floatingInput">Price</label>
-            </div>
-            
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="stock" name="stock" required>
-                <label for="floatingInput">Stock</label>
-            </div>
-            
-            <div class="mb-3">
-                <label for="formFile" class="form-label">Product Image</label>
-                <input class="form-control bg-white" type="file" name="image" id="image" >
-            </div>
+      <div class="bg-white rounded h-100 p-4">
+        <h6 class="mb-4">Add New Product</h6>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              name="product_name"
+              id="product_name"
+              required
+            />
+            <label for="floatingInput">Product Name</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="description"
+              name="description"
+              required
+            />
+            <label for="floatingInput">Description</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="number"
+              class="form-control"
+              name="price"
+              id="price"
+              required
+            />
+            <label for="floatingInput">Price</label>
+          </div>
 
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="stock"
+              name="stock"
+              required
+            />
+            <label for="floatingInput">Stock</label>
+          </div>
+          
+          
+          
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Product Image</label>
+            <input
+              class="form-control bg-white image"
+              type="file"
+              name="image"
+              id="image"
+            />
+          </div>
+          <div id="image-box">
             
-            <div class="form-floating mb-3">
-                <select class="form-select" name="category" id="category"
-                    aria-label="Floating label select example" required>
-                    <option selected disabled></option>
-                    {% for i in Categories %}
-                        <option value="{{i.id}}">{{i.category_name}}</option>
-                    {% endfor %}
-                </select>
-                <label for="floatingSelect">Select Category</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Product</button>
-            </form>
-        </div>
+              <img src="{{Product.image.url}}" id="product-image" width="400px">
+            
+          </div>
+          
+          <div class="form-floating mb-3">
+            <select
+              class="form-select"
+              name="category"
+              id="category"
+              aria-label="Floating label select example"
+              required
+            >
+              <option selected disabled></option>
+              {% for i in Categories %}
+              <option value="{{i.id}}">{{i.category_name}}</option>
+              {% endfor %}
+            </select>
+            <label for="floatingSelect">Select Category</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Product</button>
+        </form>
+      </div>
     </div>
-    </div>
-    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+
+
+
+<script>
+  const imageInput = document.getElementById("image");
+  const productImage = document.getElementById("product-image");
+
+  imageInput.addEventListener("change", function() {
+    const file = this.files[0];
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      productImage.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+<script>
+
+  var $image = $('#product-image');
+
+  $image.cropper({
+    aspectRatio: 16 / 9,
+    crop: function(event) {
+      console.log(event.detail.x);
+      console.log(event.detail.y);
+      console.log(event.detail.width);
+      console.log(event.detail.height);
+      console.log(event.detail.rotate);
+      console.log(event.detail.scaleX);
+      console.log(event.detail.scaleY);
+    }
+  });
+
+  // Get the Cropper.js instance after initialized
+  var cropper = $image.data('cropper');
+</script>
 
 {% endblock %}

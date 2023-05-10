@@ -1,47 +1,39 @@
 {% extends 'admin/adminbase.html' %}
 {% block content %}
-<div class="col-12">
-    <div class="bg-white rounded h-100 p-4">
+
+<div class="table-responsive">
+    <table class="table text-start align-middle table-bordered table-hover mb-0">
+        <thead>
+            <tr class="text-white">
+                <th scope="col">Category Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Image</th>
+            </tr>
+        </thead>
         
-        <div class="table-responsive">
-            <table class="table table-bordered align-items-center">
-                <thead>
-                    <tr class="text-dark ">
+        <tbody>
+            {% for Category in Categories %}
+            <tr>
+            
                         
-                        <th scope="col">Category Name</th>
-                        
-                        <th scope="col">Description</th>
-                        <th scope="col">Image</th>
-                        
-                    </tr>
-                </thead>
-                <tbody class = "text-dark ">
-                    {% for Category in Categories %}
-                    <tr>
-                        
-                        <td>{{Category.category_name}}</td>
-                        
-                        <td>{{Category.description}}</td>
-                        <td><img class="rounded-circle" src={{ Category.cat_img.url }} alt="" style="width: 140px; height: 160px;">
-                        
-                        <td>
-                            <a href="{% url 'editcategory' Category.id %}"><button class="btn btn-success m-2" type="button">Edit</button></a>
-                        </td>
-                        <td>
-                            <a href="{% url 'dltcategory' Category.id %} "><button class="btn btn-primary m-2" type="button">Delete</button></a>
-                        </td>
-                        
-                    </tr>
-                    {% endfor %}
+                <td class="align-middle">{{Category.category_name}}</td>
+                
+                <td>{{Category.description}}</td>
+                <td><img class="rounded-circle" src={{ Category.cat_img.url }} alt="" style="width: 65px; height: 65px;"></td>
+                
+                <td>
+                    <a href="{% url 'editcategory' Category.id %}"><button class="btn btn-success m-2" type="button">Edit</button></a>
+                </td>
+                <td>
+                    <a href="{% url 'dltcategory' Category.id %} "><button class="btn btn-primary m-2" type="button">Delete</button></a>
+                </td>
                     
-                    
-                </tbody>
-            </table>
-            <a href="{% url 'addcategory' %}"><button class="btn btn-secondary m-2" type="button">Add Category</button></a>
-        </div>
-    </div>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'addcategory'  %} "><button class="btn btn-primary m-2" type="button">Add category</button></a>
 </div>
-</div>
-</div>
+
 
 {% endblock %}

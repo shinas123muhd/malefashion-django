@@ -18,4 +18,6 @@ urlpatterns = [
         views.filter_price,
         name="filter_price",
     ),
+    
+    
 ]

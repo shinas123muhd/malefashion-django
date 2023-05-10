@@ -1,11 +1,11 @@
 <aside class="col-md-3">
 		
     <ul class="list-group">
-        <a class="list-group-item {% if '/accounts/' == request.path %}active{% endif %}" href ="{% url 'dashboard'%}">Dashboard </a>        
-        <a class="list-group-item {% if '/editprofile/' == request.path %}active{% endif %}" href ="{% url 'editprofile'%}">Edit Profile </a> 
-        <a class="list-group-item {% if '/changepassword/' == request.path %}active{% endif %}" href ="{% url 'changepassword'%}">Change Password </a>
-        <a class="list-group-item {% if '/addaddress/' == request.path %}active{% endif %}" href ="{% url 'addaddress'%}">Add address </a>
-        <a class="list-group-item {% if '/orderdetails/' == request.path %}active{% endif %}" href ="{% url 'orderdetails'%}">Order Details </a>
+        <a class="list-group-item {% if '/accounts/dashboard/' == request.path %}active{% endif %}" href ="{% url 'dashboard'%}">Dashboard </a>        
+        <a class="list-group-item {% if '/accounts/editprofile/' == request.path %}active{% endif %}" href ="{% url 'editprofile'%}">Edit Profile </a> 
+        <a class="list-group-item {% if '/accounts/changepassword/' == request.path %}active{% endif %}" href ="{% url 'changepassword'%}">Change Password </a>
+        <a class="list-group-item {% if '/accounts/addaddress/' == request.path %}active{% endif %}" href ="{% url 'addaddress'%}">Add address </a>
+        <a class="list-group-item {% if '/accounts/orderdetails/' == request.path %}active{% endif %}" href ="{% url 'orderdetails'%}">Order Details </a>
         <!--<a class="list-group-item" href="#">My orders </a>-->
         
     </ul>

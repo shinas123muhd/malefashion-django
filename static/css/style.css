@@ -1537,6 +1537,7 @@ ol {
 
 .product__details__pic__item {
 	position: relative;
+	width:40%;
 }
 
 .product__details__pic__item a {

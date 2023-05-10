@@ -1,0 +1,47 @@
+{% extends 'admin/adminbase.html' %}
+{% block content %}
+
+        
+        <div class="table-responsive">
+            <table class="table table-bordered align-items-center">
+                <thead>
+                    <tr class="text-white ">
+                        
+                        <th scope="col">Product</th>
+                        
+                        <th scope="col">Discount</th>
+                        
+                        
+                    </tr>
+                </thead>
+                <tbody class = "text-white ">
+                    {% for offer in offers %}
+                    <tr>
+                        
+                        <td>{{offer.product}}</td>
+                        <td>{{offer.discount}}</td>                    
+                        
+                        <td>
+                            <a href="{% url 'deleteoffers' offer.id %} "><button class="btn btn-primary m-2" type="button">Delete</button></a>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                </tbody>
+            </table>
+            <td>
+                <a href="{% url 'addoffer' %} "><button class="btn btn-primary m-2" type="button">Add offer</button></a>
+            </td>
+            <td>
+                <a href="{% url 'adminpanel' %} "><button class="btn btn-primary m-2" type="button">Back</button></a>
+            </td>
+            
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock %}

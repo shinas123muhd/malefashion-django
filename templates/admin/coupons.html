@@ -1,0 +1,54 @@
+{% extends 'admin/adminbase.html' %}
+{% block content %}
+
+        
+        <div class="table-responsive">
+            <table class="table table-bordered align-items-center">
+                <thead>
+                    <tr class="text-white ">
+                        
+                        <th scope="col">Coupon code</th>
+                        
+                        <th scope="col">Minimum amount</th>
+                        <th scope="col">Active date</th>
+                        <th scope="col">Expire date</th>
+                        <th scope="col">Discount_amount</th>
+                        
+                    </tr>
+                </thead>
+                <tbody class = "text-white ">
+                    {% for coupon in coupons %}
+                    <tr>
+                        
+                        <td>{{coupon.coupon_code}}</td>
+                        <td>{{coupon.min_amount}}</td>
+                        <td>{{coupon.active_date}}</td>
+                        <td>{{coupon.expire_date}}</td>
+                        <td>{{coupon.discount_amount}}</td>
+
+                        
+                        
+                        
+                        
+                        
+                        <td>
+                            <a href="{% url 'createcoupon' %} "><button class="btn btn-primary m-2" type="button">Add coupon</button></a>
+                        </td>
+                        <td>
+                            <a href="{% url 'deletecoupon' coupon.id %} "><button class="btn btn-primary m-2" type="button">Delete</button></a>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock %}

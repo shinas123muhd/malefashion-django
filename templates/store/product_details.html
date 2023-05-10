@@ -4,8 +4,8 @@
 {% block content %}
 <section class="shop-details">
     <div class="product__details__pic">
-    <div class="container">
-    <div class="row">
+        <div class="container">
+            <div class="row">
     <div class="col-lg-12">
     <div class="product__details__breadcrumb">
     <a href={% url 'Homepage' %}>Home</a>
@@ -15,7 +15,8 @@
     </div>
     </div>
     <div class="row">
-    <div class="col-lg-3 col-md-3">
+    
+    <div class="col-lg-2 col-md-3">
     <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
     <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">
@@ -23,33 +24,28 @@
     </div>
     </a>
     </li>
-    <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">
-    <div class="product__thumb__pic set-bg" data-setbg="{% static 'img/shop-details/product-big-3.png' %}">
-    </div>
-    </a>
-    </li>
-    <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">
-    <div class="product__thumb__pic set-bg" data-setbg="{% static 'img/shop-details/product-big.png' %}">
-    </div>
-    </a>
-    </li>
+    
+    
     
      </ul>
     </div>
-    <div class="col-lg-6 col-md-9">
-        <form action = "{% url 'add_cart' single_product.id %}" method ="POST">
-            {% csrf_token %}
+    <div class="col-lg-6 col-md-6">
+        
     <div class="tab-content">
     <div class="tab-pane active" id="tabs-1" role="tabpanel">
+        
     <div class="product__details__pic__item">
+        
     <img src="{{ single_product.image.url }}" alt="">
+    <div class = "magnifier-lens"></div>
+   
     </div>
+    
     </div>
     <div class="tab-pane" id="tabs-2" role="tabpanel">
     <div class="product__details__pic__item">
     <img src="{% static 'img/shop-details/product-big-3.png' %}" alt="">
+    <div class = "magnifier-lens"></div>
     </div>
     </div>
     <div class="tab-pane" id="tabs-3" role="tabpanel">
@@ -57,9 +53,11 @@
     <img src="{% static 'img/shop-details/product-big.png' %}" alt="">
     </div>
     </div>
-    
+    </div>   
     </div>
-    </div>
+    <div class ="col-lg-4 col-md-3">
+        
+    <div class ="magnified-img"></div>
     </div>
     </div>
     </div>
@@ -67,12 +65,14 @@
     <div class="product__details__content">
         
     <div class="container">
+        <form action = "{% url 'add_cart' single_product.id %}" method ="POST">
+            {% csrf_token %}
     <div class="row d-flex justify-content-center">
     <div class="col-lg-8">
     <div class="product__details__text">
     <h4>{{ single_product.product_name }} </h4>
     
-    <h3>${{  single_product.price }} </h3>
+    <h3>${{  single_product.discount_price }} </h3>
     <p>{{ single_product.description }}</p>
     <div class="product__details__option">
     <div class="d-flex justify-content-center align-items-center mb-4" >
@@ -108,8 +108,7 @@
     <h5><span>Guaranteed Safe Checkout</span></h5>
     <img src="img/shop-details/details-payment.png" alt="">
                 
-    </div>
-    </div>
+    
     </div>
     </div>
     </div>
@@ -119,6 +118,72 @@
     </section>
 
 {% endblock %}
+{% block script %}
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vaafb692b2aea4879b33c060e79fe94621666317369993"
+    integrity="sha512-0ahDYl866UMhKuYcW078ScMalXqtFJggm7TmlUtp0UlD4eQk0Ixfnm5ykXKvGJNFjLMoortdseTfsRT8oCfgGA=="
+    data-cf-beacon='{"rayId":"7ab37c793b732e8f","token":"cd0b4b3a733644fc843ef0b185f98241","version":"2023.2.0","si":100}'
+    crossorigin="anonymous"></script>
+    <script>
+      const lens = document.querySelector('.magnifier-lens');
+      const product_img = document.querySelector('.product__details__pic__item img');
+      const magnified_img = document.querySelector('.magnified-img');
+      
+      function magnify(product_img,magnified_img){
+        
+        lens.addEventListener('mousemove', moveLens)
+        product_img.addEventListener('mousemove', moveLens)
+        lens.addEventListener('mouseout', leaveLens)
+
+      }
+
+
+      function moveLens(e) {
+
+        
+        let x, y, cx, cy;
+
+        const product_img_rect = product_img.getBoundingClientRect();
+        x = e.pageX - product_img_rect.left - lens.offsetWidth / 2;
+        y = e.pageY - product_img_rect.top - lens.offsetHeight / 2;
+
+        
+
+        let max_xpos = product_img_rect.width - lens.offsetWidth;
+        let max_ypos = product_img_rect.height - lens.offsetHeight;
+
+        if (x > max_xpos) x = max_xpos;
+        if (x < 0) x = 0;
+
+        if (y > max_ypos) y = max_ypos;
+        if (y < 0) y = 0;
+        
+        lens.style.cssText = `top: ${y}px; left: ${x}px`;
+
+        cx = magnified_img.offsetWidth/lens.offsetWidth;
+        cy = magnified_img.offsetHeight/lens.offsetHeight;
+
+        magnified_img.style.cssText = `
+                        background:url('${product_img.src}')
+                        -${x *cx}px -${y *cy}px /
+                        ${product_img_rect.width * cx}px ${product_img_rect.height * cy}px
+                        no-repeat
+        `;
+        lens.classList.add('active');
+        magnified_img.classList.add('active');
+      }
+
+
+      function leaveLens(){
+        lens.classList.remove('active');
+        magnified_img.classList.remove('active');
+
+      }
+      magnify(product_img,magnified_img);
+      
+    </script>
+    {% endblock %}
+
 
 
 

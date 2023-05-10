@@ -22,4 +22,9 @@ urlpatterns = [
     path("cancelorderuser/<int:id>/", views.cancelorderUser, name="cancelorderuser"),
     path("selectaddress/", views.selectAddress, name="selectaddress"),
     path("contactus/", views.contactus, name="contactus"),
+    path("printinvoice/<int:id>/", views.printinvoice, name="printinvoice"),
+    path("registerotp/", views.registerotp, name="registerotp"),
+    path("otpverify/", views.otpverify, name="otpverify"),
+    path("returnorder/<int:id>/", views.returnorder, name="returnorder"),
+    path("aboutus/", views.aboutus, name="aboutus"),
 ]

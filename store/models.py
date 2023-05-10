@@ -28,6 +28,16 @@ class Product(models.Model):
         self.slug = slugify(self.product_name)
         super().save(*args, **kwargs)
 
+    def discount_price(self):
+        active_offers = Offer.objects.filter(product = self,is_active=True)
+        if active_offers.exists():
+            
+            
+            max_discount = active_offers.aggregate(models.Max('discount'))['discount__max']
+            discounted_price = self.price - (self.price * (max_discount / 100))
+            return discounted_price
+        return self.price
+
 
 class VariationManager(models.Manager):
     def sizes(self):
@@ -52,3 +62,8 @@ class Variation(models.Model):
 
     def __str__(self):
         return self.variation_value
+    
+class Offer(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+    discount = models.DecimalField(max_digits=5,decimal_places=2)

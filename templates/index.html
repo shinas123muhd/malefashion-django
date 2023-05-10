@@ -66,9 +66,9 @@
           <nav class="header__menu mobile-menu">
             <ul>
               <li class="active"><a href="index-2.html">Home</a></li>
-              <li><a href="{% url 'store' %}">Shop</a></li>              
-              <li><a href="about.html">About Us</a></li>                              
-              <li><a href="{% url 'contactus' %}">Contacts</a></li>
+              <li class="active"><a href="{% url 'store' %}">Shop</a></li>              
+              <li class="active"><a href="{% url 'aboutus' %}">About Us</a></li>                              
+              <li class="active"><a href="{% url 'contactus' %}">Contacts</a></li>
               {% if user.id is None %}
               
               <li><img src="{% static 'img/icon/user.png' %}" style='width:20px;' alt="">

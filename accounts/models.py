@@ -5,12 +5,12 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, username, email, password=None):
-        if not email:
-            raise ValueError("Email must be Entered")
+    def create_user(self, username, email=None, password=None,phone_number = None):
+        if not email and not phone_number:
+            raise ValueError("Email or phone number must be Entered")
         if not username:
             raise ValueError("Username must be Entered")
-        user = self.model(email=self.normalize_email(email), username=username)
+        user = self.model(email=self.normalize_email(email) if email else None, username=username,phone_number=phone_number)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -29,7 +29,7 @@ class MyAccountManager(BaseUserManager):
 class Account(AbstractBaseUser):
     username = models.CharField(max_length=50)
     first_name = models.CharField(max_length=20)
-    second_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20)
     email = models.EmailField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=50)
 
@@ -71,5 +71,5 @@ class Address(models.Model):
     name = models.CharField(blank=True, max_length=100)
     city = models.CharField(blank=True, max_length=20)
     state = models.CharField(blank=True, max_length=20)
-    Pincode = models.CharField(blank=True, max_length=10)
+    pincode = models.CharField(blank=True, max_length=10)
     phone = models.CharField(max_length=12)

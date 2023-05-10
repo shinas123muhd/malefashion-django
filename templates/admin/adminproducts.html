@@ -1,7 +1,6 @@
 {% extends 'admin/adminbase.html' %}
 {% block content %}
-<div class="col-12">
-    <div class="bg-white rounded h-100 p-4">
+
         
         <div class="table-responsive">
             <table class="table">
@@ -23,7 +22,7 @@
                     <tr>
                         
                         <td>{{Product.id}}</td> 
-                        <td><img class="rounded-circle" src={{ Product.image.url }} alt="" style="width: 140px; height: 160px;">
+                        <td><img class="rounded-circle" src={{ Product.image.url }} alt="" style="width: 65px; height: 65px;">
                             
                         </td>
                         <td>{{Product.product_name}}</td>

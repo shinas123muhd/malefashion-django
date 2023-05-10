@@ -1,5 +1,6 @@
+import json
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import RegistrationForm, UserForm, UserProfileForm
+from .forms import RegistrationForm, UserForm, UserProfileForm,OTPRegistrationForm,Verifyform
 from .models import Account, UserProfile, Address
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
@@ -9,11 +10,13 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from cart.models import Cart, CartItem
 from cart.views import _cart_id
+from category.models import Category
 import requests
-from orders.models import Order
+from orders.models import Order,OrderProduct
+from . import verify
 
 
 # Create your views here.
@@ -54,6 +57,57 @@ def RegisterPage(request):
         "form": form,
     }
     return render(request, "accounts/register.html", context)
+
+def registerotp(request):
+    if request.method == "POST":
+        form = OTPRegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            phone_number = form.cleaned_data["phone_number"]
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            user = Account.objects.create_user(
+                username=username, phone_number=phone_number,password=password,email=email
+            )
+
+            
+            user.save()
+            verify.send(form.cleaned_data.get('phone_number'))
+            request.session['email']=user.email
+            return redirect('otpverify')
+        
+            
+            
+    else:
+        form = OTPRegistrationForm()
+    context ={
+        "form":form,
+    }
+
+    return render(request,'accounts/registerotp.html',context)
+
+def otpverify(request):
+    user_email = request.session.get('email')
+    user = get_object_or_404(Account,email = user_email)
+    print(user_email)
+    
+    if request.method =="POST":
+        form = Verifyform(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data.get('code')
+            print(code)
+            if verify.check(user.phone_number, code):
+                
+                user.is_active = True
+                user.save()
+                return redirect('login')
+                
+    else:
+        form = Verifyform()
+    context = {
+        'form':form,
+    }
+    return render(request, 'accounts/verifyotp.html',context)
 
 
 def LoginPage(request):
@@ -146,10 +200,15 @@ def activatePage(request, uidb64, token):
 @login_required(login_url="login")
 def DashboardPage(request):
     user = request.user
-    order = Order.objects.filter(user=user)
+    order = Order.objects.filter(user=user,is_ordered=True)
     order_count = order.count()
+    profile = UserProfile.objects.get(user=user)
+    addresses = Address.objects.filter(profile=profile)
     context = {
+        "user":user,
         "order_count": order_count,
+        'profile':profile,
+        'addresses':addresses,
     }
     return render(request, "accounts/dashboard.html", context)
 
@@ -240,10 +299,10 @@ def editprofilePage(request):
     else:
         user_form = UserForm(instance=request.user)
         profile_form = UserProfileForm(instance=userprofile)
-        context = {
-            "user_form": user_form,
-            "profile_form": profile_form,
-        }
+    context = {
+        "user_form": user_form,
+        "profile_form": profile_form,
+    }
 
     return render(request, "accounts/editprofile.html", context)
 
@@ -285,7 +344,7 @@ def add_address(request):
                 address_line_2=request.POST["address_line_2"],
                 city=request.POST["city"],
                 state=request.POST["state"],
-                Pincode=request.POST["Pincode"],
+                pincode=request.POST["pincode"],
                 phone=request.POST["phone"],
             )
             messages.success(request, "Successfully added address")
@@ -300,7 +359,7 @@ def add_address(request):
 @login_required(login_url="login")
 def order_details(request):
     user = request.user
-    Orders = Order.objects.filter(user=user)
+    Orders = Order.objects.filter(user=user,is_ordered = True)
     order_count = Orders.count()
     context = {
         "Orders": Orders,
@@ -312,21 +371,87 @@ def order_details(request):
 
 @login_required(login_url="login")
 def cancelorderUser(request, id):
-    user = request.user
-    Orders = Order.objects.filter(id=id, user=user)
-    Orders.delete()
-    return redirect("orderdetails")
+    
+    if request.user.is_authenticated:
+        order = Order.objects.get(id=id)        
+        order_products = OrderProduct.objects.filter(order=order)       
+        for order_product in order_products:
+            product = order_product.product
+            
+            product.stock += order_product.quantity
+            
+            
+            product.save()        
+        order.delete()
+        return redirect("orderdetails")
+    
 
 
 def selectAddress(request):
-    user = request.user
-    profile = UserProfile.objects.get(user=user)
-    Addresses = Address.objects.filter(profile=profile)
-    address_count = Addresses.count()
-    context = {
-        "Addresses": Addresses,
-        "address_count": address_count,
-    }
-    return render(request, "store/checkout.html", context)
+    if request.method == "POST":
+        body = json.loads(request.body)    
+        qty = Address.objects.get(id=body["id"])
+        address_line_1 = qty.address_line_1
+        address_line_2 = qty.address_line_2
+        city = qty.city
+        state = qty.state
+        pincode = qty.pincode
+        phone = qty.phone
+        data = {
+            "address_line_1": address_line_1,
+            "address_line_2": address_line_2,
+            "city" : city,
+            "state" : state,
+            "pincode" : pincode,
+            "phone" : phone,
+            
+        }
+        return JsonResponse(data)
+    
+
+
+
 def contactus(request):
     return render(request,'contact.html')
+def printinvoice(request,id):
+    if request.user.is_authenticated:
+        order = Order.objects.get(id = id)
+        ordered_products = OrderProduct.objects.filter(order_id = id)
+
+        subtotal = 0
+        for i in ordered_products:
+            if i.product.discount_price():
+                subtotal += round(i.product.discount_price() * i.quantity,2)
+            else:            
+                subtotal += i.product_price * i.quantity
+        context = {
+            'order':order,
+            'ordered_products':ordered_products,            
+            'total':subtotal,
+        }
+        return render(request,'accounts/invoice.html',context)
+    
+def returnorder(request,id):
+    if request.user.is_authenticated:
+        order = Order.objects.get(id=id)        
+        order_products = OrderProduct.objects.filter(order=order)       
+        for order_product in order_products:
+            product = order_product.product
+            
+            product.stock += order_product.quantity
+            
+            
+            product.save()        
+        order.delete()
+    return redirect('orderdetails')
+def aboutus(request):
+    categories = Category.objects.all()
+    category_count = categories.count()
+    users = Account.objects.filter(is_admin = False)
+    users_count = users.count()
+
+    context ={
+        'category_count':category_count,
+        'users_count':users_count
+    }
+    return render(request,'aboutus.html',context)

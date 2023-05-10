@@ -1,51 +1,59 @@
 {% extends 'admin/adminbase.html' %}
 {% block content %}
-<div class="col-12">
-    <div class="bg-white rounded h-100 p-4">
+
         
-        <div class="table-responsive">
+        <div class="table-responsive"id ="topdf">
             <table class="table table-bordered align-items-center">
                 <thead>
-                    <tr class="text-dark ">
+                    <tr class="text-black ">
                         
                         <th scope="col">Username</th>
                         
                         <th scope="col">Payment method</th>
+                        <th scope="col">Order Date</th>
                         <th scope="col">Order number</th>
                         <th scope="col">Order Total</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Condition</th>
+                        <th scope="col">Action</th>
                         <th scope="col">Cancel</th>
                         <th scope="col">View Orders</th>
                     </tr>
                 </thead>
-                <tbody class = "text-dark ">
+                <tbody class = "text-black ">
+            
+        
                     {% for Order in Orders %}
                     <tr>
                         
                         <td>{{Order.user.username}}</td>
                         
-                        <td>COD</td>
+                        <td>{{Order.payment_method}}</td>
+                        <td>{{Order.created_at}}</td>
                         <td>{{Order.order_number}}</td>
                         <td>{{Order.order_total}}</td>  
                         <td>{{Order.status}}</td>                      
                         <td>
                            
                             {% if Order.status == 'New' %}
-                            <a href = "{% url 'orderstatus' Order.id 'Packed' %}"><button class="btn btn-light m-2" type="button">Packed</button></a>
+                            <a href = "{% url 'orderstatus' Order.id 'Packed' %}"><button class="btn btn-light m-2" type="button" onclick="return confirm('Are you sure you packed this order?')">Packed</button></a>
                             {% elif Order.status == 'Packed' %}
-                            <a href = "{% url 'orderstatus' Order.id 'Shipped' %}"><button class="btn btn-secondary m-2" type="button">Shipped</button></a>
+                            <a href = "{% url 'orderstatus' Order.id 'Shipped' %}"><button class="btn btn-secondary m-2" type="button" onclick="return confirm('Are you sure you shipped this order?')">Shipped</button></a>
                             {% elif Order.status == 'Shipped' %}
-                            <a href = "{% url 'orderstatus' Order.id 'Delivered' %}"><button class="btn btn-success m-2 " type="button">Delivered</button></a>
+                            <a href = "{% url 'orderstatus' Order.id 'Delivered' %}"><button class="btn btn-success m-2 " type="button" onclick="return confirm('Are you sure you delivered this order?')">Delivered</button></a>
                             {% elif Order.status == 'Delivered' %}
                             <button class="btn btn-success m-2" type="button">Completed</button>
                             
                             {% endif %}
                         </td>
+                        {% if Order.status != 'Delivered'%}
                         <td><a href = "{% url 'cancelorder' Order.id  %}"><button class="btn btn-danger m-2 " type="button">Cancel</button></a></td>
+                        {% else %}
+                        <td><button class="btn btn-success m-2 " type="button">Delivered</button></td>
+                        {% endif %}
                         <td><a href = "{% url 'vieworder' Order.id  %}"><button class="btn btn-danger m-2 " type="button">ViewOrder</button></a></td>
                     </tr>
                     {% endfor %}
+                    
                     
                     
                 </tbody>
@@ -56,4 +64,34 @@
 </div>
 </div>
 
+{% endblock %}
+{% block script %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.6/jspdf.plugin.autotable.min.js"></script>
+    <script>
+<script>
+    $(function() {
+      $("#start_date").datepicker();
+      $("#end_date").datepicker();
+    });
+    </script>
+    
+  <script>  
+    function downloadPDF() {
+        const element = document.getElementById('topdf');
+    
+      // configure the html2pdf options
+        const options = {
+          filename: 'Invoice.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+    
+      // convert the element to PDF
+      html2pdf().from(element).set(options).save();
+    }
+</script>
 {% endblock %}

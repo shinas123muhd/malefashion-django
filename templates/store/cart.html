@@ -8,7 +8,7 @@
 <script>
     document.getElementById('preloder').style.display = 'none'
 </script>
-    
+  
     {% if not cart_items %}
     <div class="container">
         <div class="row justify-content-center">
@@ -45,7 +45,7 @@
     </div>
     <div class="product__cart__item__text">
     <h6>{{ cart_item.product.product_name }}</h6>
-    <span >${{ cart_item.product.price }}</span>
+    <span >${{ cart_item.product.discount_price|floatformat:2 }}</span>
     
     </div>
     {% if cart_item.variations.all %}
@@ -64,19 +64,28 @@
             </a>
             <input type="text" class="w-25 text-center" style='border: 1px solid #fff; 'id = "itemqty-{{cart_item.id}}"  readonly value="{{ cart_item.quantity }}">
             <div class="input-group-append"> 
-              <form action = "{% url 'add_cart' cart_item.product.id %}" method = "POST"> 
-                {% csrf_token %}
+              {% comment %} <form action = "{% url 'add_cart' cart_item.product.id %}" method = "POST"> 
+                {% csrf_token %} {% endcomment %}
                 {% for item in cart_item.variations.all %}
                 <input type = "hidden" name = "{{ item.variation_category | lower }}" value = "{{ item.variation_value | capfirst }}">
-                {% endfor %}                                  
-                <button class="btn btn-light" type="submit" id="button-plus"> <i class="fa fa-plus"></i> </button>
-              </form>
+                {% endfor %}
+                
+                <a onclick="cartinc({{cart_item.id}})" class="btn btn-light">
+                  <div class="input-group-prepend"><i class="fa fa-plus"></i></div>
+                </a>
+                {% comment %} {% if cart_item.quantity >= cart_item.product.stock %}                                  
+                  <button class="btn btn-light" type="submit" id="button-plus" disabled> <i class="fa fa-plus"></i> </button>
+                {% else %}
+                  <button class="btn btn-light" type="submit" id="button-plus"> <i class="fa fa-plus"></i> </button>
+                {% endif %}
+                
+              </form> {% endcomment %}
             </div>
         </div> <!-- input-group.// -->
     </div>
     </td> 
     
-    <td id="sub_total">${{ cart_item.sub_total }}</td>
+    <td id="sub_total">${{ cart_item.sub_total}}</td>
     <td style='width:5rem'></td>
     <td >
         <form action="{% url 'remove_item_cart' cart_item.id %}" method="post">
@@ -103,18 +112,25 @@
     <div class="col-lg-4">
     <div class="cart__discount">
     <h6>Discount codes</h6>
-    <form action="#">
-    <input type="text" placeholder="Coupon code">
-    <button type="submit">Apply</button>
-    </form>
+    
+      
+    <input type="text" name = "coupon" id ="coupon" placeholder="Coupon code" style="padding: 5px; border: 1px solid #ccc;height:45px;">
+    <button type="submit" onclick ="applycoupon()"style="background-color: black; color: #fff; border: none; padding: 10px 20px; margin-left: 5px;">Apply</button>
+    <h6 id="coupon_id" style="padding-top:1rem;" ></h6>
+    
+    
+    </div>
+    <div>
+    
     </div>
     <div class="cart__total">
+      
     <h6>Cart total</h6>
     <ul>
     
-    <li>Total <span id="total">$ {{ total }}</span></li>
-    <li>Tax <span id="tax">$ {{ tax }}</span></li>
-    <li>Grand Total <span id="grand_total">$ {{ grand_total }}</span></li>
+    <li>Total <span id="total">$ {{ total|floatformat:2 }}</span></li>
+    <li>Tax <span id="tax">$ {{ tax |floatformat:2}}</span></li>
+    <li>Grand Total <span id="grand_total">$ {{ grand_total|floatformat:2 }}</span></li>
     </ul>
     <a href="{% url 'checkout' %}" class="primary-btn">Proceed to checkout</a>
     </div>
@@ -145,6 +161,7 @@
         var csrftoken = getCookie('csrftoken')
         var url = "{% url 'remove_cart' %}"
         let itemqty = document.getElementById(`itemqty-${id}`)
+        let total = document.getElementById("total")
         if (itemqty.value == 1){
           Swal.fire({
               title: 'Are you sure?',
@@ -175,6 +192,7 @@
         .then(response => response.json())
         .then((res)=>{
           if(res.data=="true"){
+            console.log(res.quantity)
             itemqty.value=res.quantity,
             total.innerHTML = `$ ${res.total}`,
             tax.innerHTML = `$ ${res.tax}`,
@@ -186,6 +204,96 @@
         
       }
     }
+
+
+
+    function cartinc(id){
+      var csrftoken = getCookie('csrftoken')
+      var url = "{% url 'plus_cart' %}"
+      let itemqty = document.getElementById(`itemqty-${id}`)
+      let total = document.getElementById("total")
+
+      fetch(url, {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "X-CSRFToken":csrftoken,
+        },
+        body:JSON.stringify({
+          id:id,
+        }),
+      })
+      .then(response => response.json())
+      .then((res)=>{
+        if(res.data=="true"){
+          console.log(res.quantity)
+          itemqty.value=res.quantity,
+          total.innerHTML = `$ ${res.total}`,
+          tax.innerHTML = `$ ${res.tax}`,
+          grand_total.innerHTML = `$ ${res.grand_total}`,
+          sub_total.innerHTML = `$ ${res.sub_total}`
+        }
+        else if(res.stock==false){
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Not Enough Stock..!',
+              
+            })
+        }
+      
+      })
+      
+    }
+  </script>
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i<cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0,name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function applycoupon(){
+      var csrftoken = getCookie('csrftoken')
+      var url = "{% url 'applycoupon' %}"
+      var coupon = document.getElementById("coupon").value
+      let total = document.getElementById("total")
+      let coupon_id = document.getElementById("coupon_id")
+      
+    
+    
+      fetch(url, {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "X-CSRFToken":csrftoken,
+        },
+        body:JSON.stringify({
+          coupon:coupon,
+        }),
+      })
+      .then(response => response.json())
+      .then((res)=>{
+        if(res){
+          grand_total.innerHTML = `$ ${res.g_total}`
+          coupon_id.innerHTML = res.coupon_id
+
+          
+      }
+      
+      })
+      
+    
+  }
     </script>
     
 

@@ -1,10 +1,13 @@
 from django.shortcuts import get_object_or_404, render
-from .models import Product
+from .models import Product,Offer
 from category.models import Category
 from cart.models import CartItem
 from cart.views import _cart_id
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
+from django.utils import timezone
+from decimal import Decimal
+
 
 
 # Create your views here.
@@ -71,3 +74,19 @@ def filter_price(request, min_val, max_val):
         "products": products,
     }
     return render(request, "store/store.html", context)
+def Productoffer(request,product_id):
+    product = Product.objects.get(id=product_id)
+    offer = Offer.objects.filter(product=product).first()    
+    discounted_price = None
+    if offer:
+        
+        discounted_price = product.price * (1 - offer.discount / 100)
+        discounted_price = discounted_price.quantize(Decimal('0.01'))
+    
+    context = {
+        'product':product,
+        'offer':offer,
+        'discounted_price':discounted_price,
+    }
+
+    return render(request,'store/store.html',context)
