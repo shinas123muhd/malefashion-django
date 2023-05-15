@@ -72,7 +72,7 @@
     <div class="product__details__text">
     <h4>{{ single_product.product_name }} </h4>
     
-    <h3>${{  single_product.discount_price }} </h3>
+    <h3>${{  single_product.discount_price|floatformat:2 }} </h3>
     <p>{{ single_product.description }}</p>
     <div class="product__details__option">
     <div class="d-flex justify-content-center align-items-center mb-4" >

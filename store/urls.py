@@ -18,6 +18,7 @@ urlpatterns = [
         views.filter_price,
         name="filter_price",
     ),
+    path("sortbyprice/",views.sortbyprice,name="sortbyprice"),
     
     
 ]

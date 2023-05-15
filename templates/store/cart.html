@@ -129,7 +129,11 @@
     <ul>
     
     <li>Total <span id="total">$ {{ total|floatformat:2 }}</span></li>
+    {% comment %} {% if discount %} {% endcomment %}
+    <li id="discount"></li>
+    {% comment %} {% endif %} {% endcomment %}
     <li>Tax <span id="tax">$ {{ tax |floatformat:2}}</span></li>
+    
     <li>Grand Total <span id="grand_total">$ {{ grand_total|floatformat:2 }}</span></li>
     </ul>
     <a href="{% url 'checkout' %}" class="primary-btn">Proceed to checkout</a>
@@ -137,8 +141,9 @@
     </div>
     </div>
     </div>
-    </section>
     {% endif %}
+    </section>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{% static 'vendor/sweetalert/sweetalert.min.js' %}"></script>
     <script>
@@ -266,6 +271,7 @@
       var csrftoken = getCookie('csrftoken')
       var url = "{% url 'applycoupon' %}"
       var coupon = document.getElementById("coupon").value
+      let discount1 = document.getElementById("discount")
       let total = document.getElementById("total")
       let coupon_id = document.getElementById("coupon_id")
       
@@ -284,8 +290,12 @@
       .then(response => response.json())
       .then((res)=>{
         if(res){
+          console.log(res)
           grand_total.innerHTML = `$ ${res.g_total}`
           coupon_id.innerHTML = res.coupon_id
+          if (res.discount){
+            discount1.innerHTML = `Discount<span>$ ${res.discount}</span>`
+          }
 
           
       }

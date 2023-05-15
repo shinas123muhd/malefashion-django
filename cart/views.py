@@ -190,6 +190,7 @@ def CartPage(request, total=0, quantity=0, cart_items=None):
     try:
         tax = 0
         grand_total = 0
+        discount = 0
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(
                 user=request.user, is_active=True
@@ -206,6 +207,12 @@ def CartPage(request, total=0, quantity=0, cart_items=None):
                 total += cart_item.product.price * cart_item.quantity
             quantity += cart_item.quantity
         tax = (2 * total) / 100
+
+        if 'coupon_code' in request.session:
+            coupon = Coupon.objects.get(coupon_code = request.session['coupon_code'])
+            if coupon:
+                discount = coupon.discount_amount
+                print(discount)
         grand_total = round(tax + total,2)
 
     except ObjectDoesNotExist:
@@ -215,6 +222,7 @@ def CartPage(request, total=0, quantity=0, cart_items=None):
         "total": total,
         "quantity": quantity,
         "cart_items": cart_items,
+        "discount": discount,
         "tax": tax,
         "grand_total": grand_total,
     }
@@ -234,11 +242,11 @@ def checkout(request, total=0, quantity=0, cart_items=None):
             cart_items = CartItem.objects.filter(cart=cart, is_active=True)
         for cart_item in cart_items:
             if cart_item.product.discount_price():
-                total += cart_item.product.discount_price() * cart_item.quantity
+                total += round(cart_item.product.discount_price() * cart_item.quantity,2)
             else:
                 total += cart_item.product.price * cart_item.quantity
             quantity += cart_item.quantity
-        tax = (2 * total) / 100
+        tax = round((2 * total) / 100,2)
         grand_total = tax + total
         disc_amount = 0
 
@@ -277,6 +285,7 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         "total": total,
         "quantity": quantity,
         "cart_items": cart_items,
+        "disc_amount":disc_amount,
         "tax": tax,
         "grand_total": '{:.2f}'.format(grand_total),
         "Addresses": Addresses,
@@ -292,7 +301,7 @@ def remove_cart(request):
     qty.save()
     str = "true"
     iquantity = qty.quantity
-    total_subtotal = 0
+    
     quantity = 0
     tax = 0
     total = 0
@@ -301,14 +310,14 @@ def remove_cart(request):
     )
     for cart_item in cart_items:
         if cart_item.product.discount_price():
-            sub_total = cart_item.quantity * cart_item.product.discount_price()
+            sub_total = round(cart_item.quantity * cart_item.product.discount_price(),2)
         else:
             sub_total = cart_item.quantity * cart_item.product.price
         
         total += sub_total
         quantity += cart_item.quantity
     print(sub_total)
-    tax = (2 * total) / 100
+    tax = round((2 * total) / 100,2)
     grand_total = tax + total
     data = {
         'total': total,
@@ -342,13 +351,13 @@ def plus_cart(request):
         )
         for cart_item in cart_items:
             if cart_item.product.discount_price():
-                sub_total = cart_item.quantity * cart_item.product.discount_price()
+                sub_total = round(cart_item.quantity * cart_item.product.discount_price(),2)
             else:
                 sub_total = cart_item.quantity * cart_item.product.price
             total += sub_total
             quantity += cart_item.quantity
         print(sub_total)
-        tax = (2 * total) / 100
+        tax = round((2 * total) / 100,2)
         grand_total = tax + total
         data = {
             'total': total,
@@ -379,6 +388,7 @@ def applycoupon(request):
 
     tax = (2 * total) / 100
     total = total+tax
+    
     try:
         coupon = Coupon.objects.get(coupon_code=coupon_code)
                
@@ -397,15 +407,18 @@ def applycoupon(request):
 
         if (int(mini_amount) < int(total) and s_date <= date <= l_date):
             g_total = total-int(disc_amount)
+            discount = disc_amount
             
             request.session['coupon_code'] = coupon_code
             data ={
+                'discount':discount,
                 'g_total': '{:.2f}'.format(g_total),
                 'coupon_id':"Applied Coupon : "+coupon_code
             }
             return JsonResponse(data)
         else:
             data = {
+                'discount':discount,
                 'g_total':total,
                 'coupon_id':"Minimal Cart Value"
             }

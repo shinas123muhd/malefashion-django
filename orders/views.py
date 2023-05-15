@@ -25,11 +25,11 @@ def PlaceOrder(request, total=0, quantity=0):
     tax = 0
     for cart_item in cart_items:
         if cart_item.product.discount_price():
-            total += cart_item.product.discount_price() * cart_item.quantity
+            total += round(cart_item.product.discount_price() * cart_item.quantity,2)
         else:
             total += cart_item.product.price * cart_item.quantity
         quantity += cart_item.quantity
-    tax = (2 * total) / 100
+    tax = round((2 * total) / 100,2)
     grand_total = total + tax
     disc_amount = 0
 
@@ -88,6 +88,7 @@ def PlaceOrder(request, total=0, quantity=0):
             context = {
                 "order": order,
                 "cart_items": cart_items,
+                "disc_amount":disc_amount,
                 "total": total,
                 "tax": tax,
                 "grand_total": grand_total,
@@ -235,8 +236,11 @@ def order_complete(request):
             subtotal += i.product_price * i.quantity
         payment = Payment.objects.get(payment_id=transID)
 
+        discount_a = order.order_total - (subtotal+order.tax)
+
         context = {
             'order':order,
+            'discount_a':discount_a,
             'ordered_products':ordered_products,
             'order_number':order.order_number,
             'transID':payment.payment_id,

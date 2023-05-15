@@ -16,24 +16,28 @@
                     </tr>
                 </thead>
                 <tbody class = "text-white ">
-                    {% for User in Users %}
+                    {% for user in Users %}
                     <tr>
                         
-                        <td>{{User.username}}</td>
+                        <td>{{user.username}}</td>
                         
-                        <td>{{User.email}}</td>
-                        <td>{{User.phone_number}}</td>
-                        {% if User.is_active %}
+                        <td>{{user.email}}</td>
+                        <td>{{user.phone_number}}</td>
+                        {% if user.is_active %}
                         <td class = text-success>Active</td>
                         {% else %}
                         <td class = text-danger>Blocked</td>
                         {% endif %}
                         
                         <td>
-                        {% if User.is_active %}
-                            <a href="{% url 'blockuser'  User.id 'block' %}"><button class="btn btn-primary m-2"  type="button">Block</button></a>
+                        {% if user.id in ordered_users %}
+                            <p>Order arriving</p>
                         {% else %}
-                            <a href="{% url 'blockuser'  User.id 'unblock' %}"><button class="btn btn-success m-2" type="button">Unblock</button></a>
+                            {% if user.is_active %}
+                                <a href="{% url 'blockuser'  user.id 'block' %}"><button class="btn btn-primary m-2"  type="button">Block</button></a>
+                            {% else %}
+                                <a href="{% url 'blockuser'  user.id 'unblock' %}"><button class="btn btn-success m-2" type="button">Unblock</button></a>
+                            {% endif %}
                         {% endif %}
                         </td>
                     </tr>

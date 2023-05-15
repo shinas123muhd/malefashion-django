@@ -85,7 +85,14 @@
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6">
     <div class="shop__product__option__right">
-    
+    <p>Sort by Price:</p>
+    <form action="{% url 'sortbyprice' %}" method="get">
+        <select name="sort_option">
+            <option value="low_to_high">Low to High</option>
+            <option value="high_to_low">High to Low</option>
+        </select>
+        <input type="submit" value="Sort" style="background-color: #4CAF50; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer;">
+    </form>
     
     </div>
     </div>
@@ -109,8 +116,9 @@
     <h5>${{ product.price }}</h5>
     <h5>
         {% if product.discount_price != product.price %}
+        
     <p class="card-text text-success font-weight-bold">
-        <del>${{ product.price }}</del> ${{ product.discount_price }}
+        <del>${{ product.price }}</del> ${{ product.discount_price|floatformat:2 }}
     </p>
 {% endif %}
     </h5>

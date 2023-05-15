@@ -17,6 +17,8 @@ from category.models import Category
 import requests
 from orders.models import Order,OrderProduct
 from . import verify
+from adminpart.models import Coupon
+from datetime import datetime
 
 
 # Create your views here.
@@ -169,7 +171,7 @@ def LoginPage(request):
                 except:
                     return redirect("Homepage")
         else:
-            messages.error(request, "Invalid login credentials")
+            messages.error(request, "User is not Active")
             return redirect("login")
     return render(request, "accounts/login.html")
 
@@ -417,16 +419,49 @@ def printinvoice(request,id):
     if request.user.is_authenticated:
         order = Order.objects.get(id = id)
         ordered_products = OrderProduct.objects.filter(order_id = id)
-
+        tax = 0
+        grand_total = 0
+        discount_a=0
         subtotal = 0
         for i in ordered_products:
             if i.product.discount_price():
                 subtotal += round(i.product.discount_price() * i.quantity,2)
             else:            
                 subtotal += i.product_price * i.quantity
+        disc_amount = 0
+        tax = round((2 * subtotal) / 100,2)
+        coupon_code = request.session.get('coupon_code')
+        if coupon_code:
+             
+            try:
+                coupon = Coupon.objects.get(coupon_code=coupon_code)
+                date = datetime.now().date()
+                s_date = coupon.active_date
+                l_date = coupon.expire_date
+                mini_amount = coupon.min_amount
+                disc_amount = coupon.discount_amount
+
+                if (int(mini_amount) < int(subtotal) and s_date <= date <= l_date):
+                    coupon_discount = int(disc_amount)
+                    grand_total = subtotal - coupon_discount + tax
+                else:
+                    request.session['coupon_code'] = None
+                    messages.error(request, 'Invalid coupon code')
+                    print("hello")
+            except Coupon.DoesNotExist:
+                request.session['coupon_code'] = None
+                messages.error(request, 'Invalid coupon code')
+                disc_amount = None
+                print("hii")
+        grand_total = subtotal + tax - int(disc_amount)
+        discount_a = order.order_total - (subtotal+tax)
+        print(discount_a)
+        print(disc_amount)
         context = {
             'order':order,
-            'ordered_products':ordered_products,            
+            'discount_a':discount_a,
+            'ordered_products':ordered_products,
+            'grand_total':grand_total,            
             'total':subtotal,
         }
         return render(request,'accounts/invoice.html',context)

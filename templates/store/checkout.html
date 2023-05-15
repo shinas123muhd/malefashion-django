@@ -93,7 +93,10 @@
     {% endfor %} 
     </ul>
     <ul class="checkout__total__all">
-        <li>Total <span>${{total}}</span></li>
+    <li>Total <span>${{total}}</span></li>
+    {% if disc_amount %}
+    <li>Discount <span>${{disc_amount}}</span></li>
+    {% endif %}
     <li>Tax <span>${{tax}}</span></li>
     <li><b>Grand Total <span id="grand_total">$ {{ grand_total }}</b></span></li>
     </ul>

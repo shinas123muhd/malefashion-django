@@ -49,10 +49,12 @@ def AdminPanel(request):
 def AdminUsers(request):
     if request.user.is_superadmin:
         Users = Account.objects.filter(is_admin=False).order_by("id")
+        ordered_users = Order.objects.filter(is_ordered=True, status__in=["New", "Packed", "Shipped", "Cancelled", "Returned"]).exclude(status="Delivered").distinct("user").values_list("user", flat=True)
         user_count = Users.count()
         context = {
             "Users": Users,
             "user_count": user_count,
+            "ordered_users":ordered_users
         }
         return render(request, "admin/adminusers.html", context)
     else:

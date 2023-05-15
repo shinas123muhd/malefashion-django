@@ -80,8 +80,7 @@ def Productoffer(request,product_id):
     discounted_price = None
     if offer:
         
-        discounted_price = product.price * (1 - offer.discount / 100)
-        discounted_price = discounted_price.quantize(Decimal('0.01'))
+        discounted_price = Decimal(product.price * (1 - offer.discount / 100)).quantize(Decimal('0.01'))
     
     context = {
         'product':product,
@@ -90,3 +89,21 @@ def Productoffer(request,product_id):
     }
 
     return render(request,'store/store.html',context)
+
+def sortbyprice(request):
+    
+    sort_option = request.GET.get('sort_option')
+    products = Product.objects.all()
+
+    if sort_option == 'low_to_high':
+        products = products.order_by('price')
+    elif sort_option == 'high_to_low':
+        products = products.order_by('-price')
+
+    context = {
+        'products':products,
+
+    }
+    return render(request,'store/store.html',context)
+    
+
